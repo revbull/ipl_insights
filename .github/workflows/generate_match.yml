@@ -1,0 +1,44 @@
+name: Daily IPL Match Generator + Telegram AutoPost
+
+on:
+  schedule:
+    - cron: "30 3 * * *"   # 09:00 IST
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install requests feedparser
+
+      - name: Run match generator
+        run: |
+          cd generator
+          python3 generate_from_api.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Auto-generated match page" || echo "No changes"
+          git push
+
+      # ============================
+      # 🔥 AUTO POST TO TELEGRAM
+      # ============================
+
+      - name: Post to Telegram
+        run: |
+          python3 generator/telegram_post.py "${{ secrets.TELEGRAM_BOT_TOKEN }}" "${{ secrets.TELEGRAM_CHANNEL_ID }}" "🏏 New IPL match page is live!\n\n🔗 https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/$(date +'%Y-%m-%d').html"
