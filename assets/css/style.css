@@ -1,0 +1,65 @@
+/* Основни цветове и стил */
+:root {
+  --bg-main: #05060a;
+  --bg-card: #10121a;
+  --bg-soft: #171a23;
+  --accent: #00e0ff;
+  --accent-yellow: #ffd800;
+  --text-main: #f5f5f7;
+  --text-muted: #a3a7b5;
+  --border-subtle: #262a37;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+  --transition-fast: .18s ease-out;
+  --max-width: 1120px;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #161927 0, #05060a 46%);
+  color: var(--text-main);
+}
+
+/* Центриране */
+main {
+  max-width: var(--max-width);
+  margin: auto;
+  padding: 20px 15px;
+}
+
+/* Карти */
+.card {
+  background: rgba(11, 14, 22, 0.95);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #57f5ff);
+  padding: 12px 18px;
+  border-radius: 99px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #000;
+  display: inline-block;
+}
+
+/* VS Стил */
+.vs {
+  color: var(--accent-yellow);
+  font-size: 45px;
+  font-weight: bold;
+  text-shadow: 0 0 15px rgba(255,216,0,.6);
+}
+
+/* Скрол */
+html {
+  scroll-behavior: smooth;
+}
