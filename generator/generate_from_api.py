@@ -249,3 +249,6 @@ subprocess.run(["git", "commit", "-m", f"Add API-based match page for {file_date
 subprocess.run(["git", "push"], cwd="..")
 
 print("\n🎉 ALL DONE! API + JSON + HTML + TELEGRAM POST + AUTO PUSH COMPLETED.")
+from update_rss import generate_rss
+generate_rss(base_url="https://revbull.github.io/ipl-site")
+
