@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIGURATION
 # =============================
 
-API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"  # 🔴 ЗАМЕНИ с твоя CricketData API key
+API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"  # ← сложи твоя CricketData API key
 BASE_URL = "https://api.cricapi.com/v1"
 
 TODAY_UTC = datetime.utcnow().strftime("%Y-%m-%d")
@@ -26,23 +26,35 @@ def parse_form(form_str: str) -> float:
     return score / len(tokens)
 
 
-def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
-    v = (venue or "").lower()
+def form_to_icons(form_string: str) -> str:
+    """
+    Преобразува формата (W/L/D) в цветни икони за HTML.
+    """
+    tokens = form_string.replace(",", " ").upper().split()
+    out = []
+    for t in tokens:
+        if t == "W":
+            out.append("🟩")
+        elif t == "L":
+            out.append("🟥")
+        elif t == "D":
+            out.append("🟨")
+    return " ".join(out)
+
+
+def estimate_projected_score(venue, form_a, form_b) -> str:
+    v = venue.lower()
 
     if any(k in v for k in ["wankhede", "eden", "chinnaswamy"]):
-        base_mid = 185
-        spread = 18
+        base_mid = 185; spread = 18
     elif any(k in v for k in ["chepauk", "arun", "delhi"]):
-        base_mid = 160
-        spread = 14
+        base_mid = 160; spread = 14
     elif "narendra modi" in v:
-        base_mid = 175
-        spread = 16
+        base_mid = 175; spread = 16
     else:
-        base_mid = 170
-        spread = 15
+        base_mid = 170; spread = 15
 
-    momentum = (parse_form(form_a) + parse_form(form_b)) / 2.0
+    momentum = (parse_form(form_a) + parse_form(form_b)) / 2
     mid = base_mid + int(momentum * 8)
 
     low = max(130, mid - spread)
@@ -51,7 +63,7 @@ def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
     return f"{low} – {high} runs"
 
 
-def auto_pitch_report(venue: str) -> str:
+def auto_pitch_report(venue):
     pitch_map = {
         "Wankhede": "High-scoring batting-friendly pitch. 180+ likely.",
         "Eden": "Flat early, spin helps later overs.",
@@ -61,26 +73,29 @@ def auto_pitch_report(venue: str) -> str:
         "Arun Jaitley": "Two-paced wicket, tough strokeplay."
     }
     for k, v in pitch_map.items():
-        if k.lower() in (venue or "").lower():
+        if k.lower() in venue.lower():
             return v
     return "Balanced T20 wicket. Expected RR 7.8 – 8.4."
 
 
-def fetch_h2h_stats(team_a: str, team_b: str) -> dict:
+def fetch_h2h_stats(team_a, team_b):
     """
-    Хваща исторически мачове между двата отбора от cricScore endpoint.
-    Ако няма достатъчно данни, връща fallback.
+    Взима исторически мачове между двата отбора от cricScore endpoint.
+    Ако няма данни, връща fallback.
     """
     try:
         url = f"{BASE_URL}/cricScore?apikey={API_KEY}"
-        res = requests.get(url, timeout=15).json().get("data", [])
+        res = requests.get(url).json().get("data", [])
 
         h2h_matches = [
             m for m in res
             if (
-                team_a.lower() in m.get("t1", "").lower() and team_b.lower() in m.get("t2", "").lower()
-            ) or (
-                team_b.lower() in m.get("t1", "").lower() and team_a.lower() in m.get("t2", "").lower()
+                team_a.lower() in m.get("t1", "").lower()
+                and team_b.lower() in m.get("t2", "").lower()
+            )
+            or (
+                team_b.lower() in m.get("t1", "").lower()
+                and team_a.lower() in m.get("t2", "").lower()
             )
         ]
 
@@ -102,7 +117,7 @@ def fetch_h2h_stats(team_a: str, team_b: str) -> dict:
                 try:
                     runs = int(score.split("/")[0])
                     totals.append(runs)
-                except Exception:
+                except:
                     pass
 
         avg_total = int(sum(totals) / len(totals)) if totals else 160
@@ -121,7 +136,6 @@ def fetch_h2h_stats(team_a: str, team_b: str) -> dict:
         }
 
     except Exception:
-        # Fallback стойности, ако API няма данни
         return {
             "total": 12,
             "wins_a": 6,
@@ -134,63 +148,54 @@ def fetch_h2h_stats(team_a: str, team_b: str) -> dict:
         }
 
 
-def estimate_win_probability(team_a: str, team_b: str, form_a: str, form_b: str, h2h: dict) -> dict:
+def estimate_win_probability(team_a, team_b, form_a, form_b, h2h):
     """
-    Опростена "AI-style" прогноза на база форма + H2H.
-    Връща проценти за двата отбора.
+    Лека аналитична прогноза (НЕ betting advice)
     """
     fa = parse_form(form_a)
     fb = parse_form(form_b)
 
-    h2h_total = max(h2h.get("total", 0), 1)
-    h2h_adv = (h2h.get("wins_a", 0) - h2h.get("wins_b", 0)) / h2h_total
+    h2h_total = max(h2h["total"], 1)
+    h2h_adv = (h2h["wins_a"] - h2h["wins_b"]) / h2h_total
 
-    base = 0.5
-    base += 0.1 * (fa - fb)      # форма
-    base += 0.1 * h2h_adv        # H2H
-
+    base = 0.5 + 0.1 * (fa - fb) + 0.1 * h2h_adv
     base = max(0.2, min(0.8, base))
 
     p_a = round(base * 100)
     p_b = 100 - p_a
 
     return {
-        "teamA": team_a,
-        "teamB": team_b,
         "teamA_win_pct": p_a,
-        "teamB_win_pct": p_b,
+        "teamB_win_pct": p_b
     }
 
 
-def logo_path_for_team(team_name: str) -> str:
+def logo_path_for_team(team_name):
     """
-    Връща път до PNG лого за отбора, ако съществува.
-    Очакваме логата да са в ../assets/img/logos/<код>.png
+    Съответствие между IPL тимове и PNG лога
     """
     mapping = {
-        "mumbai indians": "mi.png",
-        "chennai super kings": "csk.png",
+        "mumbai": "mi.png",
+        "chennai": "csk.png",
         "royal challengers": "rcb.png",
-        "royal challengers bangalore": "rcb.png",
-        "kolkata knight riders": "kkr.png",
-        "sunrisers hyderabad": "srh.png",
-        "delhi capitals": "dc.png",
-        "punjab kings": "pbks.png",
-        "rajasthan royals": "rr.png",
-        "lucknow super giants": "lsg.png",
-        "gujarat titans": "gt.png",
+        "kolkata": "kkr.png",
+        "sunrisers": "srh.png",
+        "delhi": "dc.png",
+        "punjab": "pbks.png",
+        "rajasthan": "rr.png",
+        "lucknow": "lsg.png",
+        "gujarat": "gt.png",
     }
 
-    key = (team_name or "").lower()
-    for k, filename in mapping.items():
-        if k in key:
-            return os.path.join("..", "assets", "img", "logos", filename)
+    name = team_name.lower()
+    for key, file in mapping.items():
+        if key in name:
+            return os.path.join("..", "assets", "img", "logos", file)
 
     return ""
 
-
 # =============================
-# FETCH LIVE IPL MATCH
+# FETCH MATCH LOGIC
 # =============================
 
 def fetch_live_match():
@@ -199,13 +204,9 @@ def fetch_live_match():
         data = requests.get(url, timeout=15).json().get("data", [])
         ipl = [m for m in data if "Indian Premier League" in m.get("series", "")]
         return ipl[0] if ipl else None
-    except Exception:
+    except:
         return None
 
-
-# =============================
-# FETCH NEXT SCHEDULED IPL MATCH
-# =============================
 
 def fetch_next_scheduled_match():
     try:
@@ -214,65 +215,47 @@ def fetch_next_scheduled_match():
 
         future_ipl = [
             m for m in data
-            if "Indian Premier League" in m.get("name", "") or "IPL" in m.get("series", "")
+            if "Indian Premier League" in m.get("name", "")
         ]
 
-        future_ipl = sorted(
-            future_ipl,
-            key=lambda x: x.get("date", "9999-01-01")
-        )
+        future_ipl = sorted(future_ipl, key=lambda x: x.get("date", "9999-01-01"))
 
         return future_ipl[0] if future_ipl else None
-    except Exception:
+    except:
         return None
 
-
-# =============================
-# MAIN MATCH FETCH LOGIC
-# =============================
 
 match = fetch_live_match()
 
 if match:
-    match_type = "LIVE"
     TEAM_A = match["teams"][0]
     TEAM_B = match["teams"][1]
     VENUE = match.get("venue", "Stadium")
     MATCH_DATE = TODAY_UTC
 else:
     match = fetch_next_scheduled_match()
-    match_type = "SCHEDULED"
-
     if match:
         name = match.get("name", "Team A vs Team B")
-        if "vs" in name:
-            TEAM_A, TEAM_B = [x.strip() for x in name.split("vs", 1)]
-        else:
-            TEAM_A, TEAM_B = "Team A", "Team B"
-
-        VENUE = match.get("venue", "T20 Ground")
+        TEAM_A, TEAM_B = [x.strip() for x in name.split("vs")]
+        VENUE = match.get("venue", "Cricket Stadium")
         MATCH_DATE = match.get("date", TODAY_UTC)
     else:
         TEAM_A = "Team A"
         TEAM_B = "Team B"
         VENUE = "Unknown Stadium"
         MATCH_DATE = TODAY_UTC
-        match_type = "FALLBACK"
 
 TEAM_A_FORM = "W L W W L"
 TEAM_B_FORM = "L W L L W"
 
-print(f"✔ Using match: {TEAM_A} vs {TEAM_B} ({match_type}) — {MATCH_DATE}")
+TEAM_A_FORM_ICONS = form_to_icons(TEAM_A_FORM)
+TEAM_B_FORM_ICONS = form_to_icons(TEAM_B_FORM)
 
-print("⏳ Fetching H2H statistics...")
+print("⏳ Fetching H2H stats...")
 H2H = fetch_h2h_stats(TEAM_A, TEAM_B)
-print("✔ H2H stats ready")
+print("✔ H2H loaded")
 
 PREDICTION = estimate_win_probability(TEAM_A, TEAM_B, TEAM_A_FORM, TEAM_B_FORM, H2H)
-
-# =============================
-# AUTO SCORE + PITCH
-# =============================
 
 PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
 PITCH_REPORT = auto_pitch_report(VENUE)
@@ -288,6 +271,8 @@ json_data = {
     "venue": VENUE,
     "formA": TEAM_A_FORM,
     "formB": TEAM_B_FORM,
+    "formA_icons": TEAM_A_FORM_ICONS,
+    "formB_icons": TEAM_B_FORM_ICONS,
     "pitch": PITCH_REPORT,
     "players": [
         {"name": f"{TEAM_A} Star", "meta": "Impact player"},
@@ -295,7 +280,7 @@ json_data = {
     ],
     "score": PROJECTED_SCORE,
     "h2h": H2H,
-    "prediction": PREDICTION,
+    "prediction": PREDICTION
 }
 
 os.makedirs("../data", exist_ok=True)
@@ -304,13 +289,13 @@ json_path = f"../data/{MATCH_DATE}.json"
 with open(json_path, "w", encoding="utf-8") as f:
     json.dump(json_data, f, indent=4)
 
-print("✔ JSON saved:", json_path)
+print("✔ JSON saved")
 
 # =============================
-# MATCH CARD IMAGE (logos + prediction)
+# MATCH CARD IMAGE
 # =============================
 
-def generate_card(data: dict, path: str):
+def generate_card(data, path):
     W, H = 1080, 1350
     img = Image.new("RGB", (W, H), (10, 12, 22))
     draw = ImageDraw.Draw(img)
@@ -323,56 +308,50 @@ def generate_card(data: dict, path: str):
         font_big = ImageFont.truetype("arial.ttf", 80)
         font_med = ImageFont.truetype("arial.ttf", 60)
         font_small = ImageFont.truetype("arial.ttf", 36)
-    except Exception:
+    except:
         font_big = font_med = font_small = ImageFont.load_default()
 
     team_a = data["teamA"]
     team_b = data["teamB"]
     venue = data["venue"]
     score_range = data["score"]
-    pred = data.get("prediction", {})
+    pred = data["prediction"]
 
-    draw.text((W // 2 - 260, 80), "IPL MATCH", font=font_big, fill=(0, 220, 255))
+    draw.text((W // 2 - 250, 80), "IPL MATCH", font=font_big, fill=(0, 220, 255))
 
+    # Logos
     logo_a_path = logo_path_for_team(team_a)
     logo_b_path = logo_path_for_team(team_b)
-    logo_size = 140
+    size = 140
 
     if logo_a_path and os.path.exists(logo_a_path):
-        try:
-            logo_a = Image.open(logo_a_path).convert("RGBA")
-            logo_a = logo_a.resize((logo_size, logo_size), Image.LANCZOS)
-            img.paste(logo_a, (80, 260), logo_a)
-        except Exception:
-            pass
+        logo = Image.open(logo_a_path).convert("RGBA").resize((size, size))
+        img.paste(logo, (80, 260), logo)
 
     if logo_b_path and os.path.exists(logo_b_path):
-        try:
-            logo_b = Image.open(logo_b_path).convert("RGBA")
-            logo_b = logo_b.resize((logo_size, logo_size), Image.LANCZOS)
-            img.paste(logo_b, (W - 80 - logo_size, 260), logo_b)
-        except Exception:
-            pass
+        logo = Image.open(logo_b_path).convert("RGBA").resize((size, size))
+        img.paste(logo, (W - 80 - size, 260), logo)
 
-    draw.text((80, 430), team_a, font=font_med, fill=(255, 255, 255))
-    tbw, _ = draw.textsize(team_b, font=font_med)
-    draw.text((W - 80 - tbw, 430), team_b, font=font_med, fill=(255, 255, 255))
+    draw.text((80, 430), team_a, font=font_med, fill="white")
+    draw.text((W - 80 - draw.textsize(team_b, font=font_med)[0], 430), team_b, font=font_med, fill="white")
+    draw.text((W // 2 - 30, 430), "VS", font=font_big, fill=(255, 210, 0))
 
-    draw.text((W // 2 - 40, 430), "VS", font=font_big, fill=(255, 210, 0))
     draw.text((80, 540), venue, font=font_small, fill=(190, 190, 200))
 
+    # Projected Score Box
     box_y = 650
     draw.rectangle([80, box_y, W - 80, box_y + 240], outline=(255, 210, 0), width=4)
-    draw.text((W // 2 - 170, box_y + 40), "Projected Score", font=font_small, fill=(255, 255, 255))
+    draw.text((W // 2 - 160, box_y + 40), "Projected Score", font=font_small, fill="white")
     draw.text((W // 2 - 120, box_y + 120), score_range, font=font_med, fill=(255, 210, 0))
 
-    if pred:
-        p_a = pred.get("teamA_win_pct", 50)
-        p_b = pred.get("teamB_win_pct", 50)
-        wp_y = box_y + 260
-        draw.text((80, wp_y), "Win Probability (analysis only):", font=font_small, fill=(230, 230, 240))
-        wp_text = f"{team_a}: {p_a}%  •  {team_b}: {p_b}%"
-        draw.text((80, wp_y + 50), wp_text, font=font_small, fill=(0, 220, 255))
+    # Win Probability
+    draw.text((80, box_y + 260), "Win Probability (analysis only):", font=font_small, fill=(180, 220, 255))
+    draw.text(
+        (80, box_y + 310),
+        f"{team_a}: {pred['teamA_win_pct']}%  |  {team_b}: {pred['teamB_win_pct']}%",
+        font=font_small,
+        fill=(0, 220, 255)
+    )
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path, "PNG")
@@ -380,7 +359,7 @@ def generate_card(data: dict, path: str):
 
 card_path = f"../assets/img/cards/{MATCH_DATE}.png"
 generate_card(json_data, card_path)
-print("✔ Match card generated:", card_path)
+print("✔ Match card created")
 
 # =============================
 # HTML PAGE
@@ -416,8 +395,8 @@ html = f"""<!DOCTYPE html>
   <ul>
 """
 
-for player in json_data["players"]:
-    html += f"<li><strong>{player['name']}</strong> — {player['meta']}</li>"
+for p in json_data["players"]:
+    html += f"<li><strong>{p['name']}</strong> — {p['meta']}</li>"
 
 html += f"""
   </ul>
@@ -433,15 +412,22 @@ html += f"""
   <p><strong>Total Matches:</strong> {H2H['total']}</p>
   <p><strong>{TEAM_A} Wins:</strong> {H2H['wins_a']}</p>
   <p><strong>{TEAM_B} Wins:</strong> {H2H['wins_b']}</p>
-  <p><strong>Last 5 Meetings:</strong> {TEAM_A}: {H2H['last5_a']} wins, {TEAM_B}: {H2H['last5_b']} wins</p>
+  <p><strong>Last 5:</strong> {TEAM_A} {H2H['last5_a']} – {H2H['last5_b']} {TEAM_B}</p>
   <p><strong>Average Total:</strong> {H2H['avg_total']} runs</p>
   <p><strong>Highest Score:</strong> {H2H['highest']} runs</p>
   <p><strong>Lowest Score:</strong> {H2H['lowest']} runs</p>
 </div>
 
 <div class='card'>
+  <h2>Recent Form Breakdown</h2>
+  <p><strong>{TEAM_A} Recent Form:</strong><br>{TEAM_A_FORM_ICONS}</p>
+  <p><strong>{TEAM_B} Recent Form:</strong><br>{TEAM_B_FORM_ICONS}</p>
+  <p style="font-size:14px;color:#aaa;">🟩 Win 🟥 Loss 🟨 Draw / No Result</p>
+</div>
+
+<div class='card'>
   <h2>Who Will Win? (Analysis Only)</h2>
-  <p>This is an informal probability estimate based on team form and head-to-head history. It is not advice for any financial or betting decisions.</p>
+  <p>This probability estimate is for entertainment and analysis only.</p>
   <p><strong>{TEAM_A} win chance:</strong> {PREDICTION['teamA_win_pct']}%</p>
   <p><strong>{TEAM_B} win chance:</strong> {PREDICTION['teamB_win_pct']}%</p>
 </div>
@@ -455,7 +441,7 @@ html_path = f"../matches/{MATCH_DATE}.html"
 with open(html_path, "w", encoding="utf-8") as f:
     f.write(html)
 
-print("✔ HTML saved:", html_path)
+print("✔ HTML saved")
 
 # =============================
 # TELEGRAM MESSAGE
@@ -466,7 +452,7 @@ telegram_msg = f"""🏏 *IPL Match Preview – {TEAM_A} vs {TEAM_B}*
 📅 *{MATCH_DATE}*
 🏟 *{VENUE}*
 
-🔥 *Key Players*
+🔥 *Key Players:*
 """
 for p in json_data["players"]:
     telegram_msg += f"• *{p['name']}* — {p['meta']}\n"
@@ -475,18 +461,20 @@ telegram_msg += f"""
 
 📈 *Projected Score:* {PROJECTED_SCORE}
 
-📊 *Head-to-Head*
-• Total Matches: {H2H['total']}
-• {TEAM_A} Wins: {H2H['wins_a']}
-• {TEAM_B} Wins: {H2H['wins_b']}
-• Last 5: {TEAM_A} {H2H['last5_a']} – {H2H['last5_b']} {TEAM_B}
-• Avg Total: {H2H['avg_total']}
+📊 *H2H:*  
+• Total Matches: {H2H['total']}  
+• {TEAM_A}: {H2H['wins_a']} wins  
+• {TEAM_B}: {H2H['wins_b']} wins  
 
-🤖 *Who Will Win?* (analysis only)
-• {TEAM_A}: {PREDICTION['teamA_win_pct']}%
+📉 *Recent Form:*  
+• {TEAM_A}: {TEAM_A_FORM_ICONS}  
+• {TEAM_B}: {TEAM_B_FORM_ICONS}  
+
+🤖 *Win Probability (analysis only):*  
+• {TEAM_A}: {PREDICTION['teamA_win_pct']}%  
 • {TEAM_B}: {PREDICTION['teamB_win_pct']}%
 
-🔗 Full Page:
+🔗 Full Page:  
 https://revbull.github.io/ipl-site/matches/{MATCH_DATE}.html
 """
 
@@ -494,5 +482,5 @@ os.makedirs("../telegram", exist_ok=True)
 with open("../telegram/latest_message.txt", "w", encoding="utf-8") as f:
     f.write(telegram_msg)
 
-print("✔ Telegram text created")
+print("✔ Telegram text saved")
 print("🎉 Generator finished successfully.")
