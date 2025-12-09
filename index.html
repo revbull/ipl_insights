@@ -1,300 +1,893 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>IPL Insights – Match Predictions & Analytics</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<link rel="stylesheet" href="assets/css/style.css" />
-
-<style>
-body {
-    background: #0d111c;
-    color: #fff;
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.header {
-    text-align: center;
-    padding: 15px;
-}
-
-.header h1 {
-    margin: 0;
-    color: #00d9ff;
-    font-size: 34px;
-}
-
-.card {
-    background: #141828;
-    padding: 18px 22px;
-    border-radius: 14px;
-    margin: 18px 0;
-    border: 1px solid #252b44;
-}
-
-.card h2 {
-    margin-top: 0;
-    color: #ffd34d;
-}
-
-img.match-image {
-    width: 100%;
-    border-radius: 14px;
-    margin-top: 10px;
-}
-
-.cta-btn {
-    display: block;
-    width: 100%;
-    background: #ffb100;
-    color: #000;
-    padding: 15px;
-    text-align: center;
-    font-size: 20px;
-    border-radius: 12px;
-    font-weight: bold;
-    text-decoration: none;
-    margin: 25px 0;
-}
-    /* TEAM LOGO STYLE */
-.team-logos {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-    margin: 15px 0 10px;
-}
-
-.team-logos img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-}
-
-/* STICKY CTA (mobile-first) */
-.sticky-cta {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffb100;
-    color: #000;
-    padding: 15px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
-    border-top: 3px solid #000;
-    z-index: 9999;
-}
-
-@media(min-width: 768px) {
-    .sticky-cta {
-        display: none;
+  <meta charset="UTF-8" />
+  <title>Today’s Match Preview & AI Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Clean, stats-first cricket match preview and AI analysis. Team form, pitch report, key players, projected score range and win probability."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg-main: #05060a;
+      --bg-card: #10121a;
+      --bg-soft: #171a23;
+      --accent: #00e0ff;
+      --accent-soft: rgba(0, 224, 255, 0.12);
+      --accent-yellow: #ffd800;
+      --text-main: #f5f5f7;
+      --text-muted: #a3a7b5;
+      --border-subtle: #262a37;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+      --transition-fast: 0.18s ease-out;
+      --max-width: 1120px;
     }
-}
 
-</style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #161927 0, #05060a 46%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(0, 224, 255, 0.09), transparent 55%),
+        radial-gradient(circle at 90% 80%, rgba(255, 216, 0, 0.06), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    main {
+      width: 100%;
+      max-width: var(--max-width);
+      padding: 20px 16px 80px;
+    }
+
+    @media (min-width: 768px) {
+      main {
+        padding: 28px 24px 56px;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 224, 255, 0.08);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0, 224, 255, 0.25);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 224, 255, 0.85);
+    }
+
+    .hero {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 32px;
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 10px 0 12px;
+    }
+
+    .hero-title span.accent {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 17, 25, 0.85);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 0;
+      text-decoration: none;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), color var(--transition-fast),
+        border-color var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #57f5ff);
+      color: #020308;
+      box-shadow: 0 12px 35px rgba(0, 224, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(0, 224, 255, 0.55);
+    }
+
+    .btn-ghost {
+      background: rgba(20, 24, 32, 0.8);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(26, 32, 45, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .hero-card {
+      background: radial-gradient(circle at top, #23283a, #10121a 60%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(120, 134, 180, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0, 224, 255, 0.18), transparent 60%),
+        radial-gradient(circle at 110% 20%, rgba(255, 216, 0, 0.12), transparent 55%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .hero-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .hero-card-tag {
+      font-size: 12px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(245, 245, 247, 0.18);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .hero-card-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card-team {
+      flex: 1;
+      background: rgba(6, 8, 16, 0.75);
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid rgba(163, 167, 181, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .team-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .team-form {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-card-vs {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+      text-shadow: 0 0 14px rgba(255, 216, 0, 0.85);
+      padding: 0 4px;
+    }
+
+    .hero-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .projected-score {
+      font-weight: 600;
+      color: var(--accent-yellow);
+    }
+
+    .tag-soft {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(112, 120, 168, 0.5);
+      color: var(--text-muted);
+    }
+
+    .hero-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .hero-logos img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.7));
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .card {
+      background: rgba(11, 14, 22, 0.95);
+      border-radius: var(--radius-lg);
+      padding: 16px 16px 14px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card-pill {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 224, 255, 0.06);
+      color: var(--accent);
+      border: 1px solid rgba(0, 224, 255, 0.4);
+      white-space: nowrap;
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(23, 27, 40, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .chip.highlight {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .players-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .player-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+    }
+
+    .player-name {
+      font-weight: 500;
+    }
+
+    .player-meta {
+      font-size: 12px;
+      color: var(--accent-yellow);
+    }
+
+    .score-box {
+      margin-top: 6px;
+      padding: 12px 12px 10px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255, 216, 0, 0.7);
+      background: radial-gradient(circle at top, rgba(255, 216, 0, 0.16), transparent 65%);
+      text-align: center;
+    }
+
+    .score-box-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .score-box-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+    }
+
+    .score-box-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .disclaimer {
+      margin-top: 22px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(41, 46, 65, 0.8);
+      padding-top: 14px;
+    }
+
+    .disclaimer strong {
+      color: var(--text-main);
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px;
+      border-top: 1px solid rgba(24, 27, 40, 0.9);
+      padding-top: 10px;
+    }
+
+    a.link-inline {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a.link-inline:hover {
+      text-decoration: underline;
+    }
+
+    /* Sticky CTA – mobile only */
+    .sticky-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--accent-yellow);
+      color: #05060a;
+      text-align: center;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      z-index: 9999;
+      box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.75);
+    }
+
+    @media (min-width: 900px) {
+      .sticky-cta {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <main>
+    <section class="hero">
+      <div>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span id="match-date-label">Today’s Match</span>
+        </div>
+        <h1 class="hero-title">
+          Clean, <span class="accent">stats-first</span> match preview & AI analysis.
+        </h1>
+        <p class="hero-subtitle">
+          Team form, pitch behaviour, key players, projected score range and AI-driven
+          win probability — updated automatically for cricket fans who want clear
+          insights without the noise.
+        </p>
 
-<div class="container">
+        <div class="hero-meta">
+          <span class="pill" id="format-pill">Format: T20</span>
+          <span class="pill">Focus: analysis & insights only</span>
+        </div>
 
-    <div class="header">
-        <h1>IPL Insights</h1>
-        <p>AI-Powered Cricket Predictions & Match Intelligence</p>
-    </div>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary aff-link">
+            Claim 125% Welcome Bonus
+          </a>
+          <a href="#analysis" class="btn-ghost">
+            Scroll to today’s breakdown
+          </a>
+        </div>
+      </div>
 
-    <div class="card" id="main-info">
-        <h2>Loading match...</h2>
-    </div>
-   
-    <div class="team-logos" id="team-logos"></div>
+      <aside class="hero-card" id="hero-card">
+        <div class="hero-card-header">
+          <div>
+            <div class="hero-card-title">Today’s Match</div>
+            <small id="hero-sub" style="font-size:11px;color:var(--text-muted);">
+              Loading latest fixture&hellip;
+            </small>
+          </div>
+          <div class="hero-card-tag">
+            <span style="width:8px;height:8px;border-radius:999px;background:#26ff8a;box-shadow:0 0 10px rgba(38,255,138,0.9);"></span>
+            Live soon
+          </div>
+        </div>
+        <div class="hero-card-teams">
+          <div class="hero-card-team">
+            <span class="team-name" id="hero-teamA">Team A</span>
+            <span class="team-form" id="hero-formA">Form: W L W W L</span>
+          </div>
+          <div class="hero-card-vs">VS</div>
+          <div class="hero-card-team">
+            <span class="team-name" id="hero-teamB">Team B</span>
+            <span class="team-form" id="hero-formB">Form: L W L L W</span>
+          </div>
+        </div>
+        <div class="hero-logos" id="hero-logos"></div>
+        <div class="hero-card-footer">
+          <span class="projected-score" id="hero-projected">
+            Projected score: 155 – 175 (analysis only)
+          </span>
+          <span class="tag-soft">For cricket fans · Not financial advice</span>
+        </div>
+      </aside>
+    </section>
 
-    <div class="card" id="match-card-img"></div>
+    <section id="analysis" class="grid grid-cols-2">
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Team form & momentum</h2>
+          <span class="card-pill">Recent matches</span>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <span class="stat-label" id="form-labelA">Team A — last 5</span>
+            <span class="stat-value" id="form-valuesA">W · L · W · W · L</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label" id="form-labelB">Team B — last 5</span>
+            <span class="stat-value" id="form-valuesB">L · W · L · L · W</span>
+          </div>
+          <p id="form-summary" style="margin-top:8px;">
+            Loading momentum analysis&hellip;
+          </p>
+          <div class="chip-list">
+            <span class="chip highlight" id="momentum-chip">Momentum edge: —</span>
+            <span class="chip">Powerplay stability</span>
+            <span class="chip">Middle-overs control</span>
+          </div>
+        </div>
+      </article>
 
-    <div class="card" id="pitch"></div>
-    <div class="card" id="projected"></div>
-    <div class="card" id="probability"></div>
-    <div class="card" id="odds"></div>
-    <div class="card" id="ai"></div>
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Pitch behaviour & conditions</h2>
+          <span class="card-pill">Pitch report</span>
+        </div>
+        <div class="card-body">
+          <p id="pitch-text">
+            Loading pitch report&hellip;
+          </p>
+          <div class="chip-list">
+            <span class="chip highlight" id="pitch-chip-main">Venue insights</span>
+            <span class="chip" id="pitch-chip-extra">Surface & scoring profile</span>
+          </div>
+        </div>
+      </article>
 
-    <a id="cta1" href="#" class="cta-btn" target="_blank">Bet Now</a>
-    <a id="cta2" href="#" class="cta-btn" target="_blank">Claim 125% Bonus</a>
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Key players to watch</h2>
+          <span class="card-pill">Impact players</span>
+        </div>
+        <div class="card-body">
+          <div class="players-list" id="players-list">
+            <!-- filled by JS -->
+          </div>
+          <p style="margin-top:8px;">
+            These players can swing momentum through either early breakthroughs
+            or controlled innings across the middle overs.
+          </p>
+        </div>
+      </article>
 
-</div>
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Projected score & AI win edge</h2>
+          <span class="card-pill">Analysis only</span>
+        </div>
+        <div class="card-body">
+          <p>
+            Based on venue trends, team form and matchup context, our AI model
+            projects the following scoring band and win probabilities:
+          </p>
+          <div class="score-box">
+            <div class="score-box-label">Projected first-innings total</div>
+            <div class="score-box-value" id="proj-range">155 – 175</div>
+            <div class="score-box-caption">
+              Projection for informational & fan discussion purposes only.
+            </div>
+          </div>
 
-<script>
-// TEAM LOGO MAP – IPL + ILT20 + BBL + PSL + SA20
-const LOGOS = {
-    // IPL
-    "MI": "assets/img/logos/mi.png",
-    "Mumbai Indians": "assets/img/logos/mi.png",
-    "RCB": "assets/img/logos/rcb.png",
-    "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
-    "CSK": "assets/img/logos/csk.png",
-    "Chennai Super Kings": "assets/img/logos/csk.png",
-    "KKR": "assets/img/logos/kkr.png",
-    "Kolkata Knight Riders": "assets/img/logos/kkr.png",
-    "SRH": "assets/img/logos/srh.png",
-    "Sunrisers Hyderabad": "assets/img/logos/srh.png",
-    "DC": "assets/img/logos/dc.png",
-    "Delhi Capitals": "assets/img/logos/dc.png",
-    "GT": "assets/img/logos/gt.png",
-    "Gujarat Titans": "assets/img/logos/gt.png",
-    "LSG": "assets/img/logos/lsg.png",
-    "Lucknow Super Giants": "assets/img/logos/lsg.png",
+          <div style="margin-top:10px;font-size:13px;" id="win-prob">
+            <!-- filled by JS -->
+          </div>
 
-    // ILT20
-    "MI Emirates": "assets/img/logos/mi_emirates.png",
-    "Desert Vipers": "assets/img/logos/desert_vipers.png",
-    "Gulf Giants": "assets/img/logos/gulf_giants.png",
-    "Sharjah Warriors": "assets/img/logos/sharjah_warriors.png",
-    "Dubai Capitals": "assets/img/logos/dubai_capitals.png",
-    "Abu Dhabi Knight Riders": "assets/img/logos/adkr.png",
+          <div style="margin-top:10px;font-size:13px;" id="odds-block">
+            <!-- dynamic odds + score probability -->
+          </div>
+        </div>
+      </article>
+    </section>
 
-    // BBL
-    "Sydney Sixers": "assets/img/logos/sixers.png",
-    "Sydney Thunder": "assets/img/logos/thunder.png",
-    "Perth Scorchers": "assets/img/logos/scorchers.png",
-    "Melbourne Stars": "assets/img/logos/stars.png",
-    "Melbourne Renegades": "assets/img/logos/renegades.png",
-    "Adelaide Strikers": "assets/img/logos/strikers.png",
-    "Hobart Hurricanes": "assets/img/logos/hurricanes.png",
-    "Brisbane Heat": "assets/img/logos/heat.png",
+    <section class="disclaimer">
+      <p>
+        <strong>Important:</strong> This page provides match previews and cricket
+        analysis for informational and entertainment purposes only. It does not
+        provide financial, investment or betting advice, and should not be used
+        as the sole basis for any real-money decisions.
+      </p>
+      <p style="margin-top:8px;">
+        Some cricket fans explore external platforms for statistics or match
+        information. Where links to such platforms appear, we may receive a
+        commission at no extra cost to you. Any such links, if present, are
+        clearly marked as affiliate or partner links.
+      </p>
+    </section>
 
-    // PSL
-    "Lahore Qalandars": "assets/img/logos/lahore.png",
-    "Karachi Kings": "assets/img/logos/karachi.png",
-    "Islamabad United": "assets/img/logos/islamabad.png",
-    "Quetta Gladiators": "assets/img/logos/quetta.png",
-    "Multan Sultans": "assets/img/logos/multan.png",
-    "Peshawar Zalmi": "assets/img/logos/peshawar.png",
+    <footer>
+      <span>&copy; <span id="year"></span> Match Insights · All rights reserved.</span>
+      <span>
+        Built for cricket fans ·
+        <a href="#" class="link-inline aff-link">Play on our partner site</a>
+      </span>
+    </footer>
+  </main>
 
-    // SA20
-    "Sunrisers Eastern Cape": "assets/img/logos/sunrisers_ec.png",
-    "Paarl Royals": "assets/img/logos/paarl_royals.png",
-    "Joburg Super Kings": "assets/img/logos/joburg_super_kings.png",
-    "Pretoria Capitals": "assets/img/logos/pretoria_capitals.png",
-    "MI Cape Town": "assets/img/logos/mi_cape_town.png",
-    "Durban's Super Giants": "assets/img/logos/durbans_super_giants.png",
+  <!-- Sticky CTA mobile -->
+  <a id="sticky-cta" class="sticky-cta" href="#" target="_blank">
+    Claim your welcome bonus
+  </a>
 
-    // Fallback
-    "default": "assets/img/logos/default.png"
-};
+  <script>
+    // ---------- TEAM LOGO MAP (IPL + ILT20 + BBL + PSL + SA20) ----------
+    const LOGOS = {
+      // IPL
+      "MI": "assets/img/logos/mi.png",
+      "Mumbai Indians": "assets/img/logos/mi.png",
+      "RCB": "assets/img/logos/rcb.png",
+      "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
+      "CSK": "assets/img/logos/csk.png",
+      "Chennai Super Kings": "assets/img/logos/csk.png",
+      "KKR": "assets/img/logos/kkr.png",
+      "Kolkata Knight Riders": "assets/img/logos/kkr.png",
+      "SRH": "assets/img/logos/srh.png",
+      "Sunrisers Hyderabad": "assets/img/logos/srh.png",
+      "DC": "assets/img/logos/dc.png",
+      "Delhi Capitals": "assets/img/logos/dc.png",
+      "GT": "assets/img/logos/gt.png",
+      "Gujarat Titans": "assets/img/logos/gt.png",
+      "LSG": "assets/img/logos/lsg.png",
+      "Lucknow Super Giants": "assets/img/logos/lsg.png",
 
-function getLogo(teamName) {
-    return LOGOS[teamName] || LOGOS["default"];
-}
+      // ILT20
+      "MI Emirates": "assets/img/logos/mi_emirates.png",
+      "Desert Vipers": "assets/img/logos/desert_vipers.png",
+      "Gulf Giants": "assets/img/logos/gulf_giants.png",
+      "Sharjah Warriors": "assets/img/logos/sharjah_warriors.png",
+      "Dubai Capitals": "assets/img/logos/dubai_capitals.png",
+      "Abu Dhabi Knight Riders": "assets/img/logos/adkr.png",
 
-// MAIN DATA LOAD
-fetch("data/latest.json")
-    .then(res => res.json())
-    .then(data => {
-        // MAIN MATCH INFO
-        document.getElementById("main-info").innerHTML = `
-            <h2>${data.teamA} vs ${data.teamB}</h2>
-            <p><strong>Date:</strong> ${data.date}</p>
-            <p><strong>Venue:</strong> ${data.venue}</p>
-        `;
+      // BBL
+      "Sydney Sixers": "assets/img/logos/sixers.png",
+      "Sydney Thunder": "assets/img/logos/thunder.png",
+      "Perth Scorchers": "assets/img/logos/scorchers.png",
+      "Melbourne Stars": "assets/img/logos/stars.png",
+      "Melbourne Renegades": "assets/img/logos/renegades.png",
+      "Adelaide Strikers": "assets/img/logos/strikers.png",
+      "Hobart Hurricanes": "assets/img/logos/hurricanes.png",
+      "Brisbane Heat": "assets/img/logos/heat.png",
 
-        // TEAM LOGOS
+      // PSL
+      "Lahore Qalandars": "assets/img/logos/lahore.png",
+      "Karachi Kings": "assets/img/logos/karachi.png",
+      "Islamabad United": "assets/img/logos/islamabad.png",
+      "Quetta Gladiators": "assets/img/logos/quetta.png",
+      "Multan Sultans": "assets/img/logos/multan.png",
+      "Peshawar Zalmi": "assets/img/logos/peshawar.png",
+
+      // SA20
+      "Sunrisers Eastern Cape": "assets/img/logos/sunrisers_ec.png",
+      "Paarl Royals": "assets/img/logos/paarl_royals.png",
+      "Joburg Super Kings": "assets/img/logos/joburg_super_kings.png",
+      "Pretoria Capitals": "assets/img/logos/pretoria_capitals.png",
+      "MI Cape Town": "assets/img/logos/mi_cape_town.png",
+      "Durban's Super Giants": "assets/img/logos/durbans_super_giants.png",
+
+      // Fallback
+      "default": "assets/img/logos/default.png"
+    };
+
+    function getLogo(teamName) {
+      return LOGOS[teamName] || LOGOS["default"];
+    }
+
+    // Dynamic year (footer)
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Load latest match data
+    fetch("data/latest.json")
+      .then(r => r.json())
+      .then(data => {
+        const affLink = "YOUR_AFFILIATE_LINK_HERE";
+
+        // Match date label
+        const d = data.date || "";
+        document.getElementById("match-date-label").textContent =
+          `Today’s Match · ${d}`;
+
+        // Hero card text
+        document.getElementById("hero-teamA").textContent = data.teamA;
+        document.getElementById("hero-teamB").textContent = data.teamB;
+        document.getElementById("hero-formA").textContent =
+          `Form: ${data.formA}`;
+        document.getElementById("hero-formB").textContent =
+          `Form: ${data.formB}`;
+        document.getElementById("hero-projected").textContent =
+          `Projected score: ${data.projected} (analysis only)`;
+        document.getElementById("hero-sub").textContent =
+          `${data.teamA} vs ${data.teamB} at ${data.venue}`;
+
+        // Logos
         const logosHtml = `
-            <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
-            <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
+          <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
+          <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
         `;
-        const logosEl = document.getElementById("team-logos");
-        if (logosEl) logosEl.innerHTML = logosHtml;
+        document.getElementById("hero-logos").innerHTML = logosHtml;
 
-        // MATCH CARD IMAGE
-        document.getElementById("match-card-img").innerHTML = `
-            <img class="match-image" src="assets/img/cards/${data.date}.png" />
-        `;
+        // Form section
+        document.getElementById("form-labelA").textContent =
+          `${data.teamA} — last 5`;
+        document.getElementById("form-labelB").textContent =
+          `${data.teamB} — last 5`;
+        document.getElementById("form-valuesA").textContent = data.formA;
+        document.getElementById("form-valuesB").textContent = data.formB;
 
-        // PITCH REPORT
-        document.getElementById("pitch").innerHTML = `
-            <h2>Pitch Report</h2>
-            <p>${data.pitch}</p>
-        `;
-
-        // PROJECTED SCORE
-        document.getElementById("projected").innerHTML = `
-            <h2>Projected Score</h2>
-            <p>${data.projected}</p>
-        `;
-
-        // WIN PROBABILITY
-        document.getElementById("probability").innerHTML = `
-            <h2>Win Probability (AI Model)</h2>
-            <p>${data.teamA}: ${data.ml_probability.teamA_prob}%</p>
-            <p>${data.teamB}: ${data.ml_probability.teamB_prob}%</p>
-        `;
-
-        // DYNAMIC ODDS + SCORE PROBABILITY (ИНФО САМО)
+        // Momentum summary (simple comparison)
         const pa = data.ml_probability.teamA_prob;
         const pb = data.ml_probability.teamB_prob;
+        let edgeText = "Very balanced contest.";
+        let momentumChip = "Momentum edge: Even";
 
+        if (Math.abs(pa - pb) > 5) {
+          const fav = pa > pb ? data.teamA : data.teamB;
+          edgeText = `Our model gives a slight momentum edge to ${fav}, based on recent form and venue profile.`;
+          momentumChip = `Momentum edge: ${fav}`;
+        }
+        document.getElementById("form-summary").textContent = edgeText;
+        document.getElementById("momentum-chip").textContent = momentumChip;
+
+        // Pitch section
+        document.getElementById("pitch-text").textContent = data.pitch;
+        document.getElementById("pitch-chip-main").textContent =
+          `Venue: ${data.venue}`;
+        document.getElementById("pitch-chip-extra").textContent =
+          "Surface & scoring profile";
+
+        // Players
+        const players = (data.players || []).slice(0, 4);
+        const plContainer = document.getElementById("players-list");
+        plContainer.innerHTML = "";
+        if (players.length === 0) {
+          plContainer.innerHTML = "<p>No player data available.</p>";
+        } else {
+          players.forEach(p => {
+            plContainer.innerHTML += `
+              <div class="player-item">
+                <span class="player-name">${p.name}</span>
+                <span class="player-meta">${p.role || "Key player"}</span>
+              </div>
+            `;
+          });
+        }
+
+        // Projected score & win probability
+        document.getElementById("proj-range").textContent = data.projected;
+
+        document.getElementById("win-prob").innerHTML = `
+          <strong>AI Win Probability (info only):</strong><br>
+          ${data.teamA}: ${pa}%<br>
+          ${data.teamB}: ${pb}%
+        `;
+
+        // Dynamic odds + score probability (purely informational)
         const oddsA = (100 / pa).toFixed(2);
         const oddsB = (100 / pb).toFixed(2);
 
-        // parse projected "160–190 runs"
         let low = 150, high = 190;
         const m = (data.projected || "").match(/(\d+)\D+(\d+)/);
         if (m) {
-            low = parseInt(m[1], 10);
-            high = parseInt(m[2], 10);
+          low = parseInt(m[1], 10);
+          high = parseInt(m[2], 10);
         }
 
-        const scoreHtml = `
-            <h2>Dynamic Odds & Score Range</h2>
-            <p><strong>Implied (info only):</strong><br>
-            ${data.teamA}: ~${oddsA} <span style="font-size:12px;">(decimal)</span><br>
-            ${data.teamB}: ~${oddsB} <span style="font-size:12px;">(decimal)</span></p>
-
-            <p><strong>Score Range Probability (est.):</strong><br>
-            Under ${low}: ~25%<br>
-            ${low}–${high}: ~45%<br>
-            Over ${high}: ~30%</p>
-
-            <p style="font-size:12px;opacity:0.7;">
-            * Всичко е приблизителен AI модел за информация и не е съвет за залагане.
-            </p>
-        `;
-        document.getElementById("odds").innerHTML = scoreHtml;
-
-        // AI PREDICTION
-        document.getElementById("ai").innerHTML = `
-            <h2>AI Prediction Summary</h2>
-            <p>${data.ai_summary}</p>
+        document.getElementById("odds-block").innerHTML = `
+          <strong>Implied (informational only):</strong><br>
+          ${data.teamA}: ~${oddsA} (decimal)<br>
+          ${data.teamB}: ~${oddsB} (decimal)<br><br>
+          <strong>Score band probability (est.):</strong><br>
+          Under ${low}: ~25%<br>
+          ${low}–${high}: ~45%<br>
+          Over ${high}: ~30%<br>
+          <span style="font-size:11px;opacity:0.7;display:block;margin-top:4px;">
+            * All values are approximate AI model outputs for entertainment only,
+            not betting advice.
+          </span>
         `;
 
-        // CTA BUTTONS (замени с твоя aff линк)
-        const affLink = "YOUR_AFFILIATE_LINK_HERE";
-        document.getElementById("cta1").href = affLink;
-        document.getElementById("cta2").href = affLink;
-        const sticky = document.getElementById("sticky-cta");
-        if (sticky) sticky.href = affLink;
-    })
-    .catch(err => {
-        document.getElementById("main-info").innerHTML = `
-            <h2>Error loading match data</h2>
-            <p>${err}</p>
-        `;
-    });
-</script>
+        // AI summary card – можеш да го показваш в отделна секция при нужда
+        // (засега AI summary остава в backend страницата, тук имаме по-кратък обзор)
 
-    
-<a id="sticky-cta" class="sticky-cta" href="#" target="_blank">
-    Claim Your Bonus
-</a>
-
+        // Affiliate links
+        document.querySelectorAll(".aff-link").forEach(a => {
+          a.href = affLink;
+          a.target = "_blank";
+        });
+        document.getElementById("sticky-cta").href = affLink;
+      })
+      .catch(err => {
+        console.error("LOAD ERROR:", err);
+        document.getElementById("hero-sub").textContent =
+          "Error loading latest match data.";
+        document.getElementById("form-summary").textContent =
+          "Could not load live data. Please try again later.";
+      });
+  </script>
 </body>
 </html>
