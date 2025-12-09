@@ -4,6 +4,62 @@ import subprocess
 from datetime import datetime
 import requests
 
+def parse_form(form_str: str) -> float:
+    """
+    Превръща нещо като 'W L W W L' в числова форма между -1 и +1.
+    """
+    form_str = form_str.replace(",", " ").upper()
+    tokens = [t for t in form_str.split() if t in ("W", "L", "D")]
+    if not tokens:
+        return 0.0
+    score = 0
+    for t in tokens:
+        if t == "W":
+            score += 1
+        elif t == "L":
+            score -= 1
+        # D = 0
+    return score / len(tokens)
+
+
+def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
+    """
+    Връща string range, напр. '170 – 188 runs', на база стадион + форма.
+    """
+    v = (venue or "").lower()
+
+    # базов mid според стадиона
+    if any(k in v for k in ["chinnaswamy", "wankhede", "eden gardens"]):
+        base_mid = 185
+        spread = 18
+    elif any(k in v for k in ["chepauk", "arun jaitley", "delhi"]):
+        base_mid = 160
+        spread = 14
+    elif "narendra modi" in v or "motera" in v:
+        base_mid = 175
+        spread = 16
+    else:
+        base_mid = 170
+        spread = 15
+
+    # форма на отборите
+    fa = parse_form(form_a)
+    fb = parse_form(form_b)
+    momentum = (fa + fb) / 2  # между -1 и +1
+
+    # корекция по форма (+/- 8 runs макс)
+    mid = base_mid + int(momentum * 8)
+
+    low = mid - spread
+    high = mid + spread
+
+    # ограничение
+    low = max(130, low)
+    high = min(230, high)
+
+    return f"{low} – {high} runs"
+
+
 # ============================
 # CONFIG – попълваш това
 # ============================
@@ -19,7 +75,9 @@ Expected run rate: around 7.8 – 8.5.
 Weather: generally clear, minimal dew expected.
 """
 
-DEFAULT_PROJECTED_SCORE = "160 – 180 runs"
+PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
+print("✔ Auto projected score:", PROJECTED_SCORE)
+
 
 # ============================
 # 1) Взимане на днешен мач от API
