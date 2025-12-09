@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIGURATION
 # =============================
 
-API_KEY = "YOUR_API_KEY_HERE"   # ← Replace with your CricketData key
+API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"   # ← Replace with your CricketData key
 BASE_URL = "https://api.cricapi.com/v1"
 TODAY = datetime.utcnow().strftime("%Y-%m-%d")
 
