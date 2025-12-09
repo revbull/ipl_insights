@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIGURATION
 # =============================
 
-API_KEY = "YOUR_API_KEY_HERE"  # 🔴 ЗАМЕНИ с твоя CricketData API key
+API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"  # 🔴 ЗАМЕНИ с твоя CricketData API key
 BASE_URL = "https://api.cricapi.com/v1"
 
 TODAY_UTC = datetime.utcnow().strftime("%Y-%m-%d")
@@ -487,7 +487,7 @@ telegram_msg += f"""
 • {TEAM_B}: {PREDICTION['teamB_win_pct']}%
 
 🔗 Full Page:
-https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/{MATCH_DATE}.html
+https://revbull.github.io/ipl-site/matches/{MATCH_DATE}.html
 """
 
 os.makedirs("../telegram", exist_ok=True)
