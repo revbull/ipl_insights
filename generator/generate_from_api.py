@@ -44,7 +44,7 @@ def estimate_projected_score(venue, form_a, form_b) -> str:
 
     if any(k in v for k in ["wankhede", "eden", "chinnaswamy"]):
         base_mid = 185; spread = 18
-    elif any(k in v for k in ["chepauk", "arun", "delhi"]]):
+    elif any(k in v for k in ["chepauk", "arun", "delhi"]):
         base_mid = 160; spread = 14
     elif "narendra modi" in v:
         base_mid = 175; spread = 16
