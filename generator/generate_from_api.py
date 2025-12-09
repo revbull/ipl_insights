@@ -75,6 +75,85 @@ if data:
         # Можеш да извлечеш и стадион, град и т.н.
         venue = match.get("venue") or match.get("stadium") or ""
         if venue:
+            # ============================
+# AUTO PITCH REPORT BY VENUE
+# ============================
+
+venue_name = match.get("venue") or match.get("stadium") or "Unknown"
+
+pitch_map = {
+    "Wankhede": "High-scoring batting-friendly pitch with bounce. Expect 180+ if top order settles.",
+    "Eden Gardens": "Excellent batting surface early, but spinners get help after 12–14 overs.",
+    "Chepauk": "Slow, spin-heavy surface. Difficult for batters, expect lower totals.",
+    "Narendra Modi": "Balanced wicket with early seam movement. Settles into good batting conditions.",
+    "Chinnaswamy": "Very small boundaries, extremely high scoring ground. 200+ not uncommon.",
+    "Arun Jaitley": "Slow Delhi wicket, two-paced, challenging for aggressive batting."
+}
+
+# Default pitch logic if venue not recognized
+DEFAULT_PITCH = "Balanced T20 wicket. Expected run rate around 7.8 – 8.4. Clear weather conditions."
+
+PITCH_REPORT = None
+
+for key in pitch_map:
+    if key.lower() in venue_name.lower():
+        PITCH_REPORT = pitch_map[key]
+        break
+
+if not PITCH_REPORT:
+    PITCH_REPORT = DEFAULT_PITCH
+
+print(f"✔ Auto pitch report based on venue: {venue_name}")
+
+            # ============================
+# AUTO KEY PLAYERS FROM API
+# ============================
+
+KEY_PLAYERS = []
+
+try:
+    # Пример: API endpoint за lineup / squad
+    squad_endpoint = "https://example-cricket-api.com/squad"
+
+    squad_params = {
+        "match_id": match.get("id"),
+        "apikey": API_KEY
+    }
+
+    print("⏳ Fetching squad / player stats...")
+    sq = requests.get(squad_endpoint, params=squad_params).json()
+
+    players_home = sq.get("home_team_players", [])
+    players_away = sq.get("away_team_players", [])
+
+    # Взимаме топ 2 батсмени и топ 1 боулър от API
+    def extract_key_players(players, team_short):
+        bat_sorted = sorted(players, key=lambda x: x.get("strike_rate", 0), reverse=True)
+        bowl_sorted = sorted(players, key=lambda x: x.get("wickets", 0), reverse=True)
+
+        result = []
+        if len(bat_sorted) > 0:
+            result.append((f"{bat_sorted[0]['name']} ({team_short})", "Top batsman by SR"))
+        if len(bat_sorted) > 1:
+            result.append((f"{bat_sorted[1]['name']} ({team_short})", "Reliable top-order contributor"))
+        if len(bowl_sorted) > 0:
+            result.append((f"{bowl_sorted[0]['name']} ({team_short})", "Key wicket-taking bowler"))
+
+        return result
+
+    KEY_PLAYERS.extend(extract_key_players(players_home, TEAM_A))
+    KEY_PLAYERS.extend(extract_key_players(players_away, TEAM_B))
+
+    print("✔ Key players extracted from API.")
+
+except Exception as e:
+    print("⚠ Could not fetch auto key players, using fallback.", e)
+    KEY_PLAYERS = [
+        ("Top Player A", "Impact batsman"),
+        ("Top Player B", "Key bowler"),
+        ("Top Player C", "Consistent performer")
+    ]
+
             PITCH_REPORT = f"""
 Balanced T20 surface at {venue}.
 Expected run rate: around 7.8 – 8.5.
