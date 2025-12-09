@@ -15,6 +15,93 @@
     rel="stylesheet"
   />
   <style>
+   
+    /* WIN PROBABILITY BAR */
+.wp-bar {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  border: 1px solid rgba(0,224,255,0.35);
+  margin-bottom: 6px;
+  background: rgba(15,18,26,0.9);
+}
+
+.wp-segment {
+  height: 100%;
+  transition: width 0.4s ease-out;
+}
+
+#wp-teamA {
+  background: linear-gradient(90deg, var(--accent), rgba(0,224,255,0.5));
+}
+
+#wp-teamB {
+  background: linear-gradient(90deg, rgba(255,216,0,0.5), var(--accent-yellow));
+}
+
+.wp-labels {
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+}
+
+   
+    /* DESKTOP LIVE SIDEBAR */
+#live-sidebar {
+  position: fixed;
+  top: 80px;
+  right: 32px;
+  width: 280px;
+  padding: 18px 16px;
+  background: rgba(11, 14, 22, 0.95);
+  border-radius: 16px;
+  border: 1px solid rgba(120, 134, 180, 0.5);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+  display: none;
+  z-index: 50;
+}
+
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.sidebar-cta {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, var(--accent), #57f5ff);
+  color: #020308;
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 8px 25px rgba(0,224,255,0.4);
+  transition: 0.2s ease-out;
+}
+
+.sidebar-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(0,224,255,0.55);
+}
+
+@media (min-width: 1024px) {
+  #live-sidebar {
+    display: block;
+  }
+}
+
+@media (max-width: 1023px) {
+  #live-sidebar {
+    display: none;
+  }
+}
     :root {
       --bg-main: #05060a;
       --bg-card: #10121a;
@@ -688,6 +775,32 @@
         <a href="#" class="link-inline aff-link">Play on our partner site</a>
       </span>
     </footer>
+    <!-- Desktop Live Score Sidebar -->
+<aside id="live-sidebar">
+  <h3 class="sidebar-title">Live Match</h3>
+
+ <div id="sidebar-content">
+  <p style="opacity:0.6;">Loading live score...</p>
+
+  <div id="wp-box" style="margin-top:14px;">
+    <h4 style="font-size:13px;margin-bottom:6px;color:var(--accent);">
+      Win Probability
+    </h4>
+    <div id="wp-bar" class="wp-bar">
+      <div id="wp-teamA" class="wp-segment"></div>
+      <div id="wp-teamB" class="wp-segment"></div>
+    </div>
+    <div class="wp-labels">
+      <span id="wp-labelA"></span>
+      <span id="wp-labelB"></span>
+    </div>
+  </div>
+</div>
+
+  <a id="sidebar-cta" class="sidebar-cta" href="#" target="_blank">
+    Claim Bonus →
+  </a>
+</aside>
   </main>
 
   <!-- Sticky CTA mobile -->
@@ -889,5 +1002,125 @@
           "Could not load live data. Please try again later.";
       });
   </script>
+  <script>
+<script>
+function renderLiveWidget(data) {
+  const box = document.getElementById("sidebar-content");
+
+  const t1 = data.teamA || "Team A";
+  const t2 = data.teamB || "Team B";
+
+  const scoreA = data.live?.t1s || "-";
+  const scoreB = data.live?.t2s || "-";
+
+  // AI probabilities
+  const pa = data.ml_probability?.teamA_prob || 50;
+  const pb = data.ml_probability?.teamB_prob || 50;
+
+  const total = pa + pb || 1;
+
+  // Normalize to %
+  const pA = Math.round((pa / total) * 100);
+  const pB = 100 - pA;
+
+  box.innerHTML = `
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">
+        ${t1} vs ${t2}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:4px;">
+        <strong>${t1}</strong>: ${scoreA}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:8px;">
+        <strong>${t2}</strong>: ${scoreB}
+      </div>
+
+      <!-- WIN PROBABILITY -->
+      <div style="margin-top:14px;">
+        <h4 style="font-size:13px;margin-bottom:6px;color:var(--accent);">
+          Win Probability
+        </h4>
+
+        <div class="wp-bar">
+          <div id="wp-teamA" class="wp-segment" style="width:${pA}%;"></div>
+          <div id="wp-teamB" class="wp-segment" style="width:${pB}%;"></div>
+        </div>
+
+        <div class="wp-labels">
+          <span>${t1}: ${pA}%</span>
+          <span>${t2}: ${pB}%</span>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
+        * AI estimation · auto-updates
+      </div>
+  `;
+
+  // Sidebar CTA
+  const aff = "YOUR_AFFILIATE_LINK_HERE";
+  document.getElementById("sidebar-cta").href = aff;
+}
+
+function loadLiveScore() {
+  fetch("data/latest.json")
+    .then(r => r.json())
+    .then(data => renderLiveWidget(data))
+    .catch(() =>
+      (document.getElementById("sidebar-content").innerHTML =
+        "<p style='opacity:0.6;'>No live data</p>")
+    );
+}
+
+loadLiveScore();
+setInterval(loadLiveScore, 60000);
+</script>
+
+  // fallback checks
+  const t1 = data.teamA || "Team A";
+  const t2 = data.teamB || "Team B";
+  const scoreA = data.live?.t1s || "-";
+  const scoreB = data.live?.t2s || "-";
+
+  box.innerHTML = `
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">
+        ${t1} vs ${t2}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:4px;">
+        <strong>${t1}</strong>: ${scoreA}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:8px;">
+        <strong>${t2}</strong>: ${scoreB}
+      </div>
+
+      <div style="font-size:12px;color:var(--text-muted);">
+        Updated just now · Auto-refresh active
+      </div>
+  `;
+
+  // Set CTA link (affiliate)
+  document.getElementById("sidebar-cta").href =
+      "YOUR_AFFILIATE_LINK_HERE";
+}
+
+function loadLiveScore() {
+  fetch("data/latest.json")
+    .then(r => r.json())
+    .then(data => renderLiveWidget(data))
+    .catch(err => {
+      document.getElementById("sidebar-content").innerHTML =
+        "<p style='opacity:0.6;'>No live data found</p>";
+    });
+}
+
+// initial load
+loadLiveScore();
+
+// refresh every 60 seconds
+setInterval(loadLiveScore, 60000);
+</script>
 </body>
 </html>
