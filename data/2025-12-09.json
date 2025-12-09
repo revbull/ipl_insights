@@ -1,26 +1,36 @@
 {
     "date": "2025-12-09",
-    "teamA": "Team A",
-    "teamB": "Team B",
-    "venue": "Unknown Stadium",
+    "teamA": "MI Emirates",
+    "teamB": "Desert Vipers, 9th Match",
+    "venue": "Sheikh Zayed Stadium, Abu Dhabi",
     "formA": "W L W W L",
     "formB": "L W L L W",
     "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
     "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
-    "pitch": "Balanced T20 wicket. Expected RR 7.8 \u2013 8.4.",
-    "score": "155 \u2013 185 runs",
-    "h2h": {
-        "total": 10,
-        "wins_a": 5,
-        "wins_b": 5,
-        "last5_a": 2,
-        "last5_b": 3,
-        "avg_total": 165,
-        "highest": 210,
-        "lowest": 130
+    "pitch": "Balanced wicket with moderate scoring conditions.",
+    "projected": "150\u2013190 runs",
+    "players": [
+        {
+            "name": "MI Emirates Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "MI Emirates Strike Bowler",
+            "role": "Bowler"
+        },
+        {
+            "name": "Desert Vipers, 9th Match Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Desert Vipers, 9th Match Strike Bowler",
+            "role": "Bowler"
+        }
+    ],
+    "live": null,
+    "ml_probability": {
+        "teamA_prob": 64.3,
+        "teamB_prob": 35.7
     },
-    "prediction": {
-        "teamA_win_pct": 54,
-        "teamB_win_pct": 45
-    }
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with MI Emirates appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present MI Emirates entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
 }
