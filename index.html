@@ -124,6 +124,7 @@ img.match-image {
     <div class="card" id="pitch"></div>
     <div class="card" id="projected"></div>
     <div class="card" id="probability"></div>
+    <div class="card" id="odds"></div>
     <div class="card" id="ai"></div>
 
     <a id="cta1" href="#" class="cta-btn" target="_blank">Bet Now</a>
@@ -132,55 +133,86 @@ img.match-image {
 </div>
 
 <script>
+// TEAM LOGO MAP – IPL + ILT20 + BBL + PSL + SA20
+const LOGOS = {
+    // IPL
+    "MI": "assets/img/logos/mi.png",
+    "Mumbai Indians": "assets/img/logos/mi.png",
+    "RCB": "assets/img/logos/rcb.png",
+    "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
+    "CSK": "assets/img/logos/csk.png",
+    "Chennai Super Kings": "assets/img/logos/csk.png",
+    "KKR": "assets/img/logos/kkr.png",
+    "Kolkata Knight Riders": "assets/img/logos/kkr.png",
+    "SRH": "assets/img/logos/srh.png",
+    "Sunrisers Hyderabad": "assets/img/logos/srh.png",
+    "DC": "assets/img/logos/dc.png",
+    "Delhi Capitals": "assets/img/logos/dc.png",
+    "GT": "assets/img/logos/gt.png",
+    "Gujarat Titans": "assets/img/logos/gt.png",
+    "LSG": "assets/img/logos/lsg.png",
+    "Lucknow Super Giants": "assets/img/logos/lsg.png",
+
+    // ILT20
+    "MI Emirates": "assets/img/logos/mi_emirates.png",
+    "Desert Vipers": "assets/img/logos/desert_vipers.png",
+    "Gulf Giants": "assets/img/logos/gulf_giants.png",
+    "Sharjah Warriors": "assets/img/logos/sharjah_warriors.png",
+    "Dubai Capitals": "assets/img/logos/dubai_capitals.png",
+    "Abu Dhabi Knight Riders": "assets/img/logos/adkr.png",
+
+    // BBL
+    "Sydney Sixers": "assets/img/logos/sixers.png",
+    "Sydney Thunder": "assets/img/logos/thunder.png",
+    "Perth Scorchers": "assets/img/logos/scorchers.png",
+    "Melbourne Stars": "assets/img/logos/stars.png",
+    "Melbourne Renegades": "assets/img/logos/renegades.png",
+    "Adelaide Strikers": "assets/img/logos/strikers.png",
+    "Hobart Hurricanes": "assets/img/logos/hurricanes.png",
+    "Brisbane Heat": "assets/img/logos/heat.png",
+
+    // PSL
+    "Lahore Qalandars": "assets/img/logos/lahore.png",
+    "Karachi Kings": "assets/img/logos/karachi.png",
+    "Islamabad United": "assets/img/logos/islamabad.png",
+    "Quetta Gladiators": "assets/img/logos/quetta.png",
+    "Multan Sultans": "assets/img/logos/multan.png",
+    "Peshawar Zalmi": "assets/img/logos/peshawar.png",
+
+    // SA20
+    "Sunrisers Eastern Cape": "assets/img/logos/sunrisers_ec.png",
+    "Paarl Royals": "assets/img/logos/paarl_royals.png",
+    "Joburg Super Kings": "assets/img/logos/joburg_super_kings.png",
+    "Pretoria Capitals": "assets/img/logos/pretoria_capitals.png",
+    "MI Cape Town": "assets/img/logos/mi_cape_town.png",
+    "Durban's Super Giants": "assets/img/logos/durbans_super_giants.png",
+
+    // Fallback
+    "default": "assets/img/logos/default.png"
+};
+
+function getLogo(teamName) {
+    return LOGOS[teamName] || LOGOS["default"];
+}
+
+// MAIN DATA LOAD
 fetch("data/latest.json")
     .then(res => res.json())
     .then(data => {
-
         // MAIN MATCH INFO
         document.getElementById("main-info").innerHTML = `
             <h2>${data.teamA} vs ${data.teamB}</h2>
             <p><strong>Date:</strong> ${data.date}</p>
             <p><strong>Venue:</strong> ${data.venue}</p>
         `;
-        // TEAM LOGO MAP (expand anytime)
-const LOGOS = {
-    "MI": "assets/img/logos/mi.png",
-    "Mumbai Indians": "assets/img/logos/mi.png",
 
-    "RCB": "assets/img/logos/rcb.png",
-    "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
-
-    "CSK": "assets/img/logos/csk.png",
-    "Chennai Super Kings": "assets/img/logos/csk.png",
-
-    "KKR": "assets/img/logos/kkr.png",
-    "Kolkata Knight Riders": "assets/img/logos/kkr.png",
-
-    "SRH": "assets/img/logos/srh.png",
-    "Sunrisers Hyderabad": "assets/img/logos/srh.png",
-
-    "DC": "assets/img/logos/dc.png",
-    "Delhi Capitals": "assets/img/logos/dc.png",
-
-    "GT": "assets/img/logos/gt.png",
-    "Gujarat Titans": "assets/img/logos/gt.png",
-
-    "LSG": "assets/img/logos/lsg.png",
-    "Lucknow Super Giants": "assets/img/logos/lsg.png",
-
-    // Generic fallback
-    "default": "assets/img/logos/default.png"
-};
-
-function getLogo(team) {
-    return LOGOS[team] || LOGOS["default"];
-}
-
-// Inject logos
-document.getElementById("team-logos").innerHTML = `
-    <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
-    <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
-`;
+        // TEAM LOGOS
+        const logosHtml = `
+            <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
+            <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
+        `;
+        const logosEl = document.getElementById("team-logos");
+        if (logosEl) logosEl.innerHTML = logosHtml;
 
         // MATCH CARD IMAGE
         document.getElementById("match-card-img").innerHTML = `
@@ -206,18 +238,51 @@ document.getElementById("team-logos").innerHTML = `
             <p>${data.teamB}: ${data.ml_probability.teamB_prob}%</p>
         `;
 
+        // DYNAMIC ODDS + SCORE PROBABILITY (ИНФО САМО)
+        const pa = data.ml_probability.teamA_prob;
+        const pb = data.ml_probability.teamB_prob;
+
+        const oddsA = (100 / pa).toFixed(2);
+        const oddsB = (100 / pb).toFixed(2);
+
+        // parse projected "160–190 runs"
+        let low = 150, high = 190;
+        const m = (data.projected || "").match(/(\d+)\D+(\d+)/);
+        if (m) {
+            low = parseInt(m[1], 10);
+            high = parseInt(m[2], 10);
+        }
+
+        const scoreHtml = `
+            <h2>Dynamic Odds & Score Range</h2>
+            <p><strong>Implied (info only):</strong><br>
+            ${data.teamA}: ~${oddsA} <span style="font-size:12px;">(decimal)</span><br>
+            ${data.teamB}: ~${oddsB} <span style="font-size:12px;">(decimal)</span></p>
+
+            <p><strong>Score Range Probability (est.):</strong><br>
+            Under ${low}: ~25%<br>
+            ${low}–${high}: ~45%<br>
+            Over ${high}: ~30%</p>
+
+            <p style="font-size:12px;opacity:0.7;">
+            * Всичко е приблизителен AI модел за информация и не е съвет за залагане.
+            </p>
+        `;
+        document.getElementById("odds").innerHTML = scoreHtml;
+
         // AI PREDICTION
         document.getElementById("ai").innerHTML = `
             <h2>AI Prediction Summary</h2>
             <p>${data.ai_summary}</p>
         `;
 
-        // CTA BUTTONS (replace with affiliate link)
-        document.getElementById("cta1").href = "YOUR_AFFILIATE_LINK_HERE";
-        document.getElementById("cta2").href = "YOUR_AFFILIATE_LINK_HERE";
+        // CTA BUTTONS (замени с твоя aff линк)
+        const affLink = "YOUR_AFFILIATE_LINK_HERE";
+        document.getElementById("cta1").href = affLink;
+        document.getElementById("cta2").href = affLink;
+        const sticky = document.getElementById("sticky-cta");
+        if (sticky) sticky.href = affLink;
     })
-        document.getElementById("sticky-cta").href = "YOUR_AFFILIATE_LINK_HERE";
-
     .catch(err => {
         document.getElementById("main-info").innerHTML = `
             <h2>Error loading match data</h2>
@@ -225,6 +290,7 @@ document.getElementById("team-logos").innerHTML = `
         `;
     });
 </script>
+
     
 <a id="sticky-cta" class="sticky-cta" href="#" target="_blank">
     Claim Your Bonus
