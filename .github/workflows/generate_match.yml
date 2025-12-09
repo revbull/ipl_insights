@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests feedparser
+                - name: Install dependencies
+        run: |
+          pip install requests feedparser pillow
+
 
       - name: Run match generator
         run: |
