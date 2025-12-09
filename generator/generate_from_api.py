@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIG
 # ============================
 
-API_KEY = "YOUR_API_KEY_HERE"
+API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"
 BASE_URL = "https://api.cricapi.com/v1"
 
 # ============================
