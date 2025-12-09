@@ -1,71 +1,69 @@
-name: Generate IPL Match + Deploy
+name: Generate IPL Match
+
+on:
+  workflow_dispatch:  # allow manual run
+  schedule:
+    - cron: "0 4 * * *"   # auto-run every day at 04:00 UTC (adjust if needed)
+
 permissions:
   contents: write
 
-
-on:
-  workflow_dispatch:          # позволява ръчно пускане
-  schedule:
-    - cron: "0 */6 * * *"     # на всеки 6 часа
-
 jobs:
-  build:
+  build-and-update:
     runs-on: ubuntu-latest
 
     steps:
-      # -------------------------------------------------
-      # 1) Checkout repo
-      # -------------------------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+    # -------------------------------------------------
+    # CHECKOUT
+    # -------------------------------------------------
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      # -------------------------------------------------
-      # 2) Setup Python
-      # -------------------------------------------------
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+    # -------------------------------------------------
+    # PYTHON SETUP + CACHE
+    # -------------------------------------------------
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      # -------------------------------------------------
-      # 3) Install Python dependencies
-      # -------------------------------------------------
-      - name: Install dependencies
-        run: |
-          pip install pillow requests
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
-      # -------------------------------------------------
-      # 4) Run the match generator (HTML, JSON, PNG, Telegram)
-      # -------------------------------------------------
-      - name: Run generate_from_api.py
-        run: |
-          cd generator
-          python3 generate_from_api.py
+    # -------------------------------------------------
+    # INSTALL DEPENDENCIES
+    # -------------------------------------------------
+    - name: Install dependencies
+      run: |
+        pip install pillow requests
 
-      # -------------------------------------------------
-      # 5) Generate RSS feed
-      # -------------------------------------------------
-      - name: Generate RSS feed
-        run: |
-          cd generator
-          python3 generate_rss.py
+    # -------------------------------------------------
+    # RUN GENERATOR SCRIPT
+    # -------------------------------------------------
+    - name: Run IPL Match Generator
+      run: |
+        cd generator
+        python3 generate_from_api.py
 
-      # -------------------------------------------------
-      # 6) Commit changes back to the repository
-      # -------------------------------------------------
-      - name: Commit and push if changed
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions Bot"
+    # -------------------------------------------------
+    # COMMIT & FORCE PUSH
+    # -------------------------------------------------
+    - name: Push updated files
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
 
-          git add -A
+        git add -A
 
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Automated match update: $(date)"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
-          fi
+        git commit -m "Automated match update: $(date)" || echo "No changes to commit"
+
+        # ALWAYS force push to avoid non-fast-forward errors
+        git push origin HEAD:main --force
+
