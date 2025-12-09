@@ -1,39 +1,36 @@
 import os
 import json
-import subprocess
 import requests
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
-# ============================
-# CONFIG
-# ============================
+# =============================
+# CONFIGURATION
+# =============================
 
-API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"
+API_KEY = "YOUR_API_KEY_HERE"
 BASE_URL = "https://api.cricapi.com/v1"
 
-# ============================
-# UTIL FUNCTIONS
-# ============================
+TODAY = datetime.utcnow().strftime("%Y-%m-%d")
+
+# =============================
+# UTILITY FUNCTIONS
+# =============================
 
 def parse_form(form_str: str) -> float:
     form_str = form_str.replace(",", " ").upper()
     tokens = [t for t in form_str.split() if t in ("W", "L", "D")]
     if not tokens:
         return 0
-    score = 0
-    for t in tokens:
-        if t == "W": score += 1
-        elif t == "L": score -= 1
+    score = sum(1 if t=="W" else -1 if t=="L" else 0 for t in tokens)
     return score / len(tokens)
 
+def estimate_projected_score(venue, form_a, form_b) -> str:
+    v = venue.lower()
 
-def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
-    v = (venue or "").lower()
-
-    if any(k in v for k in ["chinnaswamy", "wankhede", "eden"]):
+    if any(k in v for k in ["wankhede", "eden", "chinnaswamy"]):
         base_mid = 185; spread = 18
-    elif any(k in v for k in ["chepauk", "arun jaitley", "delhi"]):
+    elif any(k in v for k in ["chepauk", "arun", "delhi"]):
         base_mid = 160; spread = 14
     elif "narendra modi" in v:
         base_mid = 175; spread = 16
@@ -48,219 +45,217 @@ def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
 
     return f"{low} – {high} runs"
 
-
 def auto_pitch_report(venue):
     pitch_map = {
-        "Wankhede": "High-scoring pitch with bounce, 180+ possible.",
-        "Eden": "Flat early but spin helps later.",
-        "Chinnaswamy": "Very small boundaries, 200+ common.",
-        "Chepauk": "Slow surface, spin-friendly, low scoring.",
+        "Wankhede": "High-scoring batting-friendly pitch. 180+ likely.",
+        "Eden": "Flat early, spin helps later overs.",
+        "Chinnaswamy": "Very small boundaries — 200+ common.",
         "Narendra Modi": "Balanced wicket with early seam movement.",
-        "Arun Jaitley": "Two-paced Delhi pitch, difficult strokeplay."
+        "Chepauk": "Slow, spin-heavy, low-scoring venue.",
+        "Arun Jaitley": "Two-paced wicket, tough strokeplay."
     }
-    for k, v in pitch_map.items():
+    for k,v in pitch_map.items():
         if k.lower() in venue.lower():
             return v
     return "Balanced T20 wicket. Expected RR 7.8 – 8.4."
 
+# =============================
+# FETCH LIVE IPL MATCH
+# =============================
 
-# ============================
-# FETCH MATCH FROM API
-# ============================
+def fetch_live_match():
+    try:
+        url = f"{BASE_URL}/currentMatches?apikey={API_KEY}"
+        data = requests.get(url).json().get("data", [])
+        ipl = [m for m in data if "Indian Premier League" in m.get("series", "")]
+        return ipl[0] if ipl else None
+    except:
+        return None
 
-print("⏳ Fetching today's matches...")
+# =============================
+# FETCH NEXT SCHEDULED IPL MATCH
+# =============================
 
-today_api = datetime.utcnow().strftime("%Y-%m-%d")
-matches_url = f"{BASE_URL}/currentMatches?apikey={API_KEY}"
+def fetch_next_scheduled_match():
+    try:
+        url = f"{BASE_URL}/matchCalendar?apikey={API_KEY}"
+        data = requests.get(url).json().get("data", [])
 
-try:
-    resp = requests.get(matches_url).json()
-    all_matches = resp.get("data", [])
-except:
-    all_matches = []
+        future_ipl = [
+            m for m in data 
+            if "Indian Premier League" in m.get("name","") 
+               or "IPL" in m.get("series","")
+        ]
 
-ipl_matches = [m for m in all_matches if "Indian Premier League" in m.get("series", "")]
-match = ipl_matches[0] if ipl_matches else None
+        # sort by date
+        future_ipl = sorted(
+            future_ipl, 
+            key=lambda x: x.get("date", "9999-01-01")
+        )
 
-if not match:
-    print("⚠ No IPL match found today.")
-    TEAM_A = "Team A"; TEAM_B = "Team B"; VENUE = "Unknown Stadium"
-    TEAM_A_FORM = "W L W W L"; TEAM_B_FORM = "L W L L W"
-else:
-    TEAM_A, TEAM_B = match["teams"][0], match["teams"][1]
-    VENUE = match.get("venue", "Stadium")
-    TEAM_A_FORM = "W L W W L"
-    TEAM_B_FORM = "L W L L W"
+        return future_ipl[0] if future_ipl else None
+    except:
+        return None
 
-print(f"✔ Match: {TEAM_A} vs {TEAM_B} at {VENUE}")
+# =============================
+# MAIN MATCH FETCH LOGIC
+# =============================
 
-# ============================
-# FETCH SQUAD FOR KEY PLAYERS
-# ============================
-
-KEY_PLAYERS = []
+match = fetch_live_match()
 
 if match:
-    squad_url = f"{BASE_URL}/match_info?apikey={API_KEY}&id={match['id']}"
-    try:
-        squad_data = requests.get(squad_url).json().get("data", {})
-        players = squad_data.get("players", [])
-    except:
-        players = []
+    match_type = "LIVE"
+    TEAM_A = match["teams"][0]
+    TEAM_B = match["teams"][1]
+    VENUE = match.get("venue","Stadium")
+    MATCH_DATE = TODAY
 else:
-    players = []
+    match = fetch_next_scheduled_match()
+    match_type = "SCHEDULED"
 
-players_a = [p for p in players if p.get("teamName") == TEAM_A]
-players_b = [p for p in players if p.get("teamName") == TEAM_B]
+    if match:
+        name = match.get("name","Team A vs Team B")
+        if "vs" in name:
+            TEAM_A, TEAM_B = [x.strip() for x in name.split("vs")]
+        else:
+            TEAM_A, TEAM_B = "Team A", "Team B"
 
-def select_top(players_list, team_tag):
-    if not players_list:
-        return []
-    bats = sorted([p for p in players_list if "BAT" in p.get("role","").upper()],
-                  key=lambda x: x.get("strikeRate", 0), reverse=True)
-    bowl = sorted([p for p in players_list if "BOWL" in p.get("role","").upper()],
-                  key=lambda x: x.get("wickets", 0), reverse=True)
+        VENUE = match.get("venue","T20 Ground")
+        MATCH_DATE = match.get("date", TODAY)
+    else:
+        # fallback
+        TEAM_A = "Team A"
+        TEAM_B = "Team B"
+        VENUE = "Unknown Stadium"
+        MATCH_DATE = TODAY
 
-    out = []
-    if bats: 
-        out.append((f"{bats[0]['name']} ({team_tag})", "Top batsman"))
-    if len(bats) > 1: 
-        out.append((f"{bats[1]['name']} ({team_tag})", "Consistent batsman"))
-    if bowl: 
-        out.append((f"{bowl[0]['name']} ({team_tag})", "Wicket taker"))
-    return out
+TEAM_A_FORM = "W L W W L"
+TEAM_B_FORM = "L W L L W"
 
-KEY_PLAYERS = select_top(players_a, TEAM_A) + select_top(players_b, TEAM_B)
+print(f"✔ Using match: {TEAM_A} vs {TEAM_B} ({match_type}) — {MATCH_DATE}")
 
-if not KEY_PLAYERS:
-    KEY_PLAYERS = [
-        ("Star Player 1", "Impact batsman"),
-        ("Star Player 2", "Key bowler")
-    ]
+# =============================
+# AUTO KEY PLAYERS (fallback logic)
+# =============================
 
-# ============================
-# AUTO SCORE + PITCH REPORT
-# ============================
+KEY_PLAYERS = [
+    (f"{TEAM_A} Star", "Impact player"),
+    (f"{TEAM_B} Star", "Key performer")
+]
+
+# =============================
+# AUTO SCORE + PITCH
+# =============================
 
 PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
 PITCH_REPORT = auto_pitch_report(VENUE)
 
-# ============================
+# =============================
 # SAVE JSON
-# ============================
-
-file_date = datetime.now().strftime("%Y-%m-%d")
+# =============================
 
 json_data = {
-    "date": file_date,
+    "date": MATCH_DATE,
     "teamA": TEAM_A,
     "teamB": TEAM_B,
     "venue": VENUE,
     "formA": TEAM_A_FORM,
     "formB": TEAM_B_FORM,
     "pitch": PITCH_REPORT,
-    "players": [{"name": n, "meta": m} for n, m in KEY_PLAYERS],
+    "players": [{"name": n, "meta": m} for n,m in KEY_PLAYERS],
     "score": PROJECTED_SCORE
 }
 
 os.makedirs("../data", exist_ok=True)
 
-with open(f"../data/{file_date}.json", "w", encoding="utf-8") as f:
+json_path = f"../data/{MATCH_DATE}.json"
+with open(json_path,"w",encoding="utf-8") as f:
     json.dump(json_data, f, indent=4)
 
-print("✔ JSON saved")
+print("✔ JSON saved:", json_path)
 
-# ============================
-# GENERATE MATCH CARD IMAGE
-# ============================
+# =============================
+# MATCH CARD IMAGE
+# =============================
 
 def generate_card(data, path):
     W, H = 1080, 1350
-    img = Image.new("RGB", (W, H), (5, 6, 10))
+    img = Image.new("RGB", (W, H), (10, 12, 22))
     draw = ImageDraw.Draw(img)
 
-    # Gradient background
     for y in range(H):
-        shade = int(10 + (y / H) * 60)
-        draw.line([(0, y), (W, y)], fill=(shade, shade, shade+20))
+        c = 10 + int(40 * (y/H))
+        draw.line([(0,y),(W,y)], fill=(c,c,c+10))
 
     try:
         font_big = ImageFont.truetype("arial.ttf", 80)
         font_med = ImageFont.truetype("arial.ttf", 60)
-        font_small = ImageFont.truetype("arial.ttf", 38)
+        font_small = ImageFont.truetype("arial.ttf", 36)
     except:
         font_big = font_med = font_small = ImageFont.load_default()
 
-    # Title
-    draw.text((W//2 - 250, 80), "IPL MATCH", font=font_big, fill=(0,220,255))
-
-    # Teams
+    draw.text((W//2 - 260, 80), "IPL MATCH", font=font_big, fill=(0,220,255))
     draw.text((80, 300), data["teamA"], font=font_med, fill=(255,255,255))
-    draw.text((W - 80 - draw.textsize(data["teamB"], font=font_med)[0], 300),
-              data["teamB"], font=font_med, fill=(255,255,255))
+    tw = draw.textsize(data["teamB"], font=font_med)[0]
+    draw.text((W - 80 - tw, 300), data["teamB"], font=font_med, fill=(255,255,255))
+    draw.text((W//2 - 40, 380), "VS", font=font_big, fill=(255,210,0))
+    draw.text((80, 460), data["venue"], font=font_small, fill=(190,190,200))
 
-    draw.text((W//2 - 40, 370), "VS", font=font_big, fill=(255,210,0))
-
-    # Venue
-    draw.text((80, 450), data["venue"], font=font_small, fill=(200,200,210))
-
-    # Score box
-    box_y = 600
-    draw.rectangle([80, box_y, W-80, box_y+240], outline=(255,210,0), width=4)
-
-    draw.text((W//2 - 200, box_y+40), "Projected Score:", font=font_small, fill=(255,255,255))
+    box_y = 650
+    draw.rectangle([80,box_y,W-80,box_y+240], outline=(255,210,0), width=4)
+    draw.text((W//2 - 170, box_y+40), "Projected Score", font=font_small, fill=(255,255,255))
     draw.text((W//2 - 120, box_y+120), data["score"], font=font_med, fill=(255,210,0))
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path, "PNG")
 
-card_path = f"../assets/img/cards/{file_date}.png"
+card_path = f"../assets/img/cards/{MATCH_DATE}.png"
 generate_card(json_data, card_path)
-print("✔ Match card created:", card_path)
 
-# ============================
+print("✔ Match card generated:", card_path)
+
+# =============================
 # HTML PAGE
-# ============================
+# =============================
 
 os.makedirs("../matches", exist_ok=True)
 
 html = f"""<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>{TEAM_A} vs {TEAM_B} — IPL Match Preview</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+<meta charset="UTF-8">
+<title>{TEAM_A} vs {TEAM_B} — IPL Match Preview</title>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 <main>
 
-<div style="max-width:600px;margin:0 auto 24px;">
-  <img src="../assets/img/cards/{file_date}.png" 
-       style="width:100%;border-radius:24px;box-shadow:0 18px 45px rgba(0,0,0,.7);" />
+<div style='max-width:600px;margin:0 auto 24px;'>
+  <img src="../assets/img/cards/{MATCH_DATE}.png" style="width:100%;border-radius:24px;" />
 </div>
 
 <h1>{TEAM_A} vs {TEAM_B}</h1>
-<p><strong>Date:</strong> {file_date}</p>
+<p><strong>Date:</strong> {MATCH_DATE}</p>
 <p><strong>Venue:</strong> {VENUE}</p>
 
-<div class="card">
-  <h2>Pitch Report</h2>
-  <p>{PITCH_REPORT}</p>
+<div class='card'>
+<h2>Pitch Report</h2>
+<p>{PITCH_REPORT}</p>
 </div>
 
-<div class="card">
-  <h2>Key Players</h2>
-  <ul>
+<div class='card'>
+<h2>Key Players</h2>
+<ul>
 """
 
 for name, meta in KEY_PLAYERS:
-    html += f"<li><strong>{name}</strong> — {meta}</li>\n"
+    html += f"<li><strong>{name}</strong> — {meta}</li>"
 
 html += f"""
-  </ul>
+</ul>
 </div>
 
-<div class="card">
+<div class='card'>
 <h2>Projected Score</h2>
 <p>{PROJECTED_SCORE}</p>
 </div>
@@ -270,43 +265,38 @@ html += f"""
 </html>
 """
 
-with open(f"../matches/{file_date}.html","w",encoding="utf-8") as f:
+html_path = f"../matches/{MATCH_DATE}.html"
+with open(html_path,"w",encoding="utf-8") as f:
     f.write(html)
 
-print("✔ HTML page created")
+print("✔ HTML saved:", html_path)
 
-# ============================
+# =============================
 # TELEGRAM MESSAGE
-# ============================
+# =============================
 
 telegram_msg = f"""🏏 *IPL Match Preview – {TEAM_A} vs {TEAM_B}*
 
-📅 *{file_date}*
+📅 *{MATCH_DATE}*
 🏟 *{VENUE}*
 
-🔥 *Key Players:*
+🔥 *Key Players*
 """
 
-for name, meta in KEY_PLAYERS:
-    telegram_msg += f"• *{name}* — {meta}\n"
+for n,m in KEY_PLAYERS:
+    telegram_msg += f"• *{n}* — {m}\n"
 
 telegram_msg += f"""
 
 📈 *Projected Score:* {PROJECTED_SCORE}
 
-🔗 More details:
-https://revbull.github.io/ipl-site/matches/{file_date}.html
+🔗 Full Page:
+https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/{MATCH_DATE}.html
 """
 
 os.makedirs("../telegram", exist_ok=True)
-
 with open("../telegram/latest_message.txt","w",encoding="utf-8") as f:
     f.write(telegram_msg)
 
-print("✔ Telegram message saved")
-
-# ============================
-# (OPTIONAL) GIT PUSH
-# ============================
-
-print("✔ Generator finished successfully.")
+print("✔ Telegram text created")
+print("🎉 Generator finished successfully.")
