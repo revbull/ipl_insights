@@ -2,42 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>IPL Insights – AI Powered Cricket Analytics</title>
+<title>IPL Insights – Match Predictions & Analytics</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <link rel="stylesheet" href="assets/css/style.css" />
 
 <style>
-/* --- Homepage Styling --- */
 body {
-    background: #0c0f1b;
+    background: #0d111c;
     color: #fff;
-    margin: 0;
     font-family: Arial, sans-serif;
 }
 
-header {
-    text-align: center;
-    padding: 30px 10px;
-}
-
-header h1 {
-    font-size: 32px;
-    margin: 0;
-    color: #00d9ff;
-}
-
-.main-container {
-    max-width: 900px;
+.container {
+    max-width: 850px;
     margin: 0 auto;
     padding: 20px;
 }
 
+.header {
+    text-align: center;
+    padding: 15px;
+}
+
+.header h1 {
+    margin: 0;
+    color: #00d9ff;
+    font-size: 34px;
+}
+
 .card {
-    background: #141829;
-    padding: 20px;
-    margin: 20px 0;
+    background: #141828;
+    padding: 18px 22px;
     border-radius: 14px;
-    border: 1px solid #2a2f45;
+    margin: 18px 0;
+    border: 1px solid #252b44;
 }
 
 .card h2 {
@@ -45,127 +44,106 @@ header h1 {
     color: #ffd34d;
 }
 
-.match-card img {
+img.match-image {
     width: 100%;
     border-radius: 14px;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
-.cta {
+.cta-btn {
     display: block;
-    text-align: center;
-    margin-top: 18px;
+    width: 100%;
     background: #ffb100;
     color: #000;
-    padding: 14px;
-    text-decoration: none;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
     border-radius: 12px;
     font-weight: bold;
-}
-
-.footer {
-    text-align: center;
-    margin: 40px 0 20px;
-    opacity: 0.75;
-    font-size: 14px;
+    text-decoration: none;
+    margin: 25px 0;
 }
 </style>
 
 </head>
 <body>
 
-<header>
-    <h1>IPL Insights</h1>
-    <p>Real-time AI-powered cricket analytics & match intelligence</p>
-</header>
+<div class="container">
 
-<div class="main-container">
+    <div class="header">
+        <h1>IPL Insights</h1>
+        <p>AI-Powered Cricket Predictions & Match Intelligence</p>
+    </div>
 
-<div id="loading" class="card">
-    <h2>Loading Latest Match...</h2>
-    <p>Please wait...</p>
-</div>
+    <div class="card" id="main-info">
+        <h2>Loading match...</h2>
+    </div>
 
-<div id="content" style="display:none;">
-
-    <div class="card" id="match-info"></div>
-
-    <div class="card match-card" id="match-card-img"></div>
-
-    <div class="card" id="form-guide"></div>
+    <div class="card" id="match-card-img"></div>
 
     <div class="card" id="pitch"></div>
-
     <div class="card" id="projected"></div>
-
     <div class="card" id="probability"></div>
+    <div class="card" id="ai"></div>
 
-    <div class="card" id="ai-summary"></div>
-
-    <a id="cta-btn" class="cta" href="#" target="_blank">View Full Match Page</a>
-
-</div>
+    <a id="cta1" href="#" class="cta-btn" target="_blank">Bet Now</a>
+    <a id="cta2" href="#" class="cta-btn" target="_blank">Claim 125% Bonus</a>
 
 </div>
-
-<div class="footer">© 2025 IPL Insights. AI-driven cricket analytics.</div>
-
 
 <script>
-/* --- NEW WORKING JS --- */
 fetch("data/latest.json")
-    .then(r => r.json())
+    .then(res => res.json())
     .then(data => {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("content").style.display = "block";
 
-        document.getElementById("match-info").innerHTML = `
+        // MAIN MATCH INFO
+        document.getElementById("main-info").innerHTML = `
             <h2>${data.teamA} vs ${data.teamB}</h2>
             <p><strong>Date:</strong> ${data.date}</p>
             <p><strong>Venue:</strong> ${data.venue}</p>
         `;
 
+        // MATCH CARD IMAGE
         document.getElementById("match-card-img").innerHTML = `
-            <img src="assets/img/cards/${data.date}.png" alt="Match Card">
+            <img class="match-image" src="assets/img/cards/${data.date}.png" />
         `;
 
-        document.getElementById("form-guide").innerHTML = `
-            <h2>Form Guide</h2>
-            <p>${data.teamA}: ${data.formA_icons}</p>
-            <p>${data.teamB}: ${data.formB_icons}</p>
-        `;
-
+        // PITCH REPORT
         document.getElementById("pitch").innerHTML = `
             <h2>Pitch Report</h2>
             <p>${data.pitch}</p>
         `;
 
+        // PROJECTED SCORE
         document.getElementById("projected").innerHTML = `
             <h2>Projected Score</h2>
             <p>${data.projected}</p>
         `;
 
+        // WIN PROBABILITY
         document.getElementById("probability").innerHTML = `
-            <h2>Win Probability (ML Model)</h2>
+            <h2>Win Probability (AI Model)</h2>
             <p>${data.teamA}: ${data.ml_probability.teamA_prob}%</p>
             <p>${data.teamB}: ${data.ml_probability.teamB_prob}%</p>
         `;
 
-        document.getElementById("ai-summary").innerHTML = `
-            <h2>AI Match Prediction</h2>
+        // AI PREDICTION
+        document.getElementById("ai").innerHTML = `
+            <h2>AI Prediction Summary</h2>
             <p>${data.ai_summary}</p>
         `;
 
-        document.getElementById("cta-btn").href =
-            `matches/${data.date}.html`;
+        // CTA BUTTONS (replace with affiliate link)
+        document.getElementById("cta1").href = "YOUR_AFFILIATE_LINK_HERE";
+        document.getElementById("cta2").href = "YOUR_AFFILIATE_LINK_HERE";
     })
     .catch(err => {
-        console.error("LOAD ERROR:", err);
-        document.getElementById("loading").innerHTML =
-            "<h2>Error loading match data</h2>";
+        document.getElementById("main-info").innerHTML = `
+            <h2>Error loading match data</h2>
+            <p>${err}</p>
+        `;
     });
 </script>
-
 
 </body>
 </html>
