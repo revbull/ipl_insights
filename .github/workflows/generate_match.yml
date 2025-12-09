@@ -1,8 +1,8 @@
-name: Daily IPL Match Generator + Telegram AutoPost
+name: Daily IPL Match Generator
 
 on:
   schedule:
-    - cron: "30 3 * * *"   # 09:00 IST
+    - cron: "30 3 * * *"   # 09:00 IST = 03:30 UTC
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,35 +20,30 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests feedparser
-                - name: Install dependencies
-        run: |
-          pip install requests feedparser pillow
+          pip install requests pillow feedparser
 
-
-      - name: Run match generator
+      - name: Run generator
         run: |
           cd generator
           python3 generate_from_api.py
-          
-                - name: Generate match card image
-        run: |
-          cd generator
-          python3 match_card.py
 
-
-      - name: Commit changes
+      - name: Commit generated files
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Auto-generated match page" || echo "No changes"
+          git commit -m "Auto-generated IPL match for $(date +'%Y-%m-%d')" || echo "No changes"
           git push
 
-      # ============================
-      # 🔥 AUTO POST TO TELEGRAM
-      # ============================
-
+      # -------------------------------
+      # 🔥 Auto-post to Telegram Channel
+      # -------------------------------
       - name: Post to Telegram
         run: |
-          python3 generator/telegram_post.py "${{ secrets.TELEGRAM_BOT_TOKEN }}" "${{ secrets.TELEGRAM_CHANNEL_ID }}" "🏏 New IPL match page is live!\n\n🔗 https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/$(date +'%Y-%m-%d').html"
+          MESSAGE=$(cat telegram/latest_message.txt)
+          curl -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHANNEL_ID }}" \
+            -d "parse_mode=Markdown" \
+            --data-urlencode "text=$MESSAGE" \
+            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage
