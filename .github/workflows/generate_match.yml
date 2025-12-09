@@ -1,52 +1,68 @@
-name: Daily IPL Match Generator
+name: Generate IPL Match + Deploy
 
 on:
+  workflow_dispatch:          # позволява ръчно пускане
   schedule:
-    - cron: "30 3 * * *"   # 09:00 IST
-  workflow_dispatch:
+    - cron: "0 */6 * * *"     # на всеки 6 часа
 
 jobs:
-  generate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
+      # -------------------------------------------------
+      # 1) Checkout repo
+      # -------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v3
         with:
-          python-version: "3.12"
+          persist-credentials: false
+          fetch-depth: 0
 
+      # -------------------------------------------------
+      # 2) Setup Python
+      # -------------------------------------------------
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # -------------------------------------------------
+      # 3) Install Python dependencies
+      # -------------------------------------------------
       - name: Install dependencies
         run: |
-          pip install requests pillow feedparser
+          pip install pillow requests
 
-      - name: Run generator script
+      # -------------------------------------------------
+      # 4) Run the match generator (HTML, JSON, PNG, Telegram)
+      # -------------------------------------------------
+      - name: Run generate_from_api.py
         run: |
           cd generator
           python3 generate_from_api.py
 
-      - name: Commit generated files
+      # -------------------------------------------------
+      # 5) Generate RSS feed
+      # -------------------------------------------------
+      - name: Generate RSS feed
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Auto-generated IPL match for $(date +'%Y-%m-%d')" || echo "No changes"
-          git push
+          cd generator
+          python3 generate_rss.py
 
-      # ----------------------------------------------------
-      # 🔥 POST TO TELEGRAM — VALID SINGLE 'run' BLOCK
-      # ----------------------------------------------------
-      - name: Post to Telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      # -------------------------------------------------
+      # 6) Commit changes back to the repository
+      # -------------------------------------------------
+      - name: Commit and push if changed
         run: |
-          MESSAGE=$(cat telegram/latest_message.txt)
-          curl -X POST \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "chat_id=${TELEGRAM_CHANNEL_ID}" \
-            -d "parse_mode=Markdown" \
-            --data-urlencode "text=$MESSAGE" \
-            https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions Bot"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated match update: $(date)"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
+          fi
