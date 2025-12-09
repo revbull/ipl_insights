@@ -112,89 +112,60 @@ header h1 {
 
 
 <script>
-// ================================
-// Load latest match JSON
-// ================================
-fetch("data/")
-    .then(res => res.text())
-    .then(text => {
-        // Find newest JSON file (latest date)
-        const matchFiles = [...text.matchAll(/(\d{4}-\d{2}-\d{2})\.json/g)]
-                          .map(m => m[0])
-                          .sort()
-                          .reverse();
-
-        if (matchFiles.length === 0) {
-            document.getElementById("loading").innerHTML =
-                "<h2>No Match Data Found</h2>";
-            return;
-        }
-
-        const latestFile = "data/" + matchFiles[0];
-
-        return fetch(latestFile).then(r => r.json());
-    })
+/* --- NEW WORKING JS --- */
+fetch("data/latest.json")
+    .then(r => r.json())
     .then(data => {
-        if (!data) return;
-
         document.getElementById("loading").style.display = "none";
         document.getElementById("content").style.display = "block";
 
-        // HEADER MATCH INFO
         document.getElementById("match-info").innerHTML = `
             <h2>${data.teamA} vs ${data.teamB}</h2>
             <p><strong>Date:</strong> ${data.date}</p>
             <p><strong>Venue:</strong> ${data.venue}</p>
         `;
 
-        // MATCH CARD IMG
         document.getElementById("match-card-img").innerHTML = `
             <img src="assets/img/cards/${data.date}.png" alt="Match Card">
         `;
 
-        // FORM GUIDE
         document.getElementById("form-guide").innerHTML = `
             <h2>Form Guide</h2>
             <p>${data.teamA}: ${data.formA_icons}</p>
             <p>${data.teamB}: ${data.formB_icons}</p>
         `;
 
-        // PITCH
         document.getElementById("pitch").innerHTML = `
             <h2>Pitch Report</h2>
             <p>${data.pitch}</p>
         `;
 
-        // PROJECTED SCORE
         document.getElementById("projected").innerHTML = `
             <h2>Projected Score</h2>
             <p>${data.projected}</p>
         `;
 
-        // WIN PROBABILITY
         document.getElementById("probability").innerHTML = `
             <h2>Win Probability (ML Model)</h2>
             <p>${data.teamA}: ${data.ml_probability.teamA_prob}%</p>
             <p>${data.teamB}: ${data.ml_probability.teamB_prob}%</p>
         `;
 
-        // AI SUMMARY
         document.getElementById("ai-summary").innerHTML = `
             <h2>AI Match Prediction</h2>
             <p>${data.ai_summary}</p>
         `;
 
-        // CTA BUTTON: FULL MATCH PAGE
         document.getElementById("cta-btn").href =
             `matches/${data.date}.html`;
-
     })
     .catch(err => {
-        console.error("Error loading match:", err);
+        console.error("LOAD ERROR:", err);
         document.getElementById("loading").innerHTML =
-            "<h2>Error loading match data.</h2>";
+            "<h2>Error loading match data</h2>";
     });
 </script>
+
 
 </body>
 </html>
