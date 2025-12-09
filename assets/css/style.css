@@ -1,65 +1,185 @@
-/* Основни цветове и стил */
 :root {
-  --bg-main: #05060a;
-  --bg-card: #10121a;
-  --bg-soft: #171a23;
+  --bg: #05060a;
+  --bg-elevated: #101320;
+  --bg-card: #151827;
+  --border-soft: rgba(255, 255, 255, 0.08);
   --accent: #00e0ff;
-  --accent-yellow: #ffd800;
-  --text-main: #f5f5f7;
-  --text-muted: #a3a7b5;
-  --border-subtle: #262a37;
+  --accent-soft: rgba(0, 224, 255, 0.12);
+  --accent-2: #ffd600;
+  --text-main: #f5f6fa;
+  --text-soft: #a3a7c2;
+  --text-muted: #7a7f98;
+  --danger: #ff4b5c;
+  --success: #3cd278;
   --radius-lg: 18px;
-  --radius-xl: 24px;
-  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
-  --transition-fast: .18s ease-out;
-  --max-width: 1120px;
+  --shadow-soft: 0 22px 60px rgba(0, 0, 0, 0.8);
+  --max-width: 960px;
+  --transition-fast: 0.18s ease-out;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #161b3a 0, #05060a 45%, #020308 100%);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
-  font-family: "Montserrat", sans-serif;
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top, #161927 0, #05060a 46%);
+  min-height: 100vh;
+}
+
+main {
+  max-width: var(--max-width);
+  margin: 32px auto 64px;
+  padding: 0 16px 32px;
+}
+
+/* HEADER / TITLE */
+
+h1 {
+  font-size: 2.4rem;
+  margin: 0 0 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+h1 + p {
+  text-align: center;
+  margin: 0 0 24px;
+  color: var(--text-soft);
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0 0 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* CARD LAYOUT */
+
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(0, 224, 255, 0.04));
+  border-radius: var(--radius-lg);
+  padding: 18px 20px 18px;
+  margin: 20px 0;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.card p {
+  margin: 6px 0;
+  line-height: 1.55;
+  color: var(--text-soft);
+}
+
+.card ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--text-soft);
+}
+
+.card li {
+  margin: 4px 0;
+}
+
+/* TOP IMAGE */
+
+main > div:first-of-type img {
+  display: block;
+  border-radius: 26px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* META LINE */
+
+p strong {
   color: var(--text-main);
 }
 
-/* Центриране */
-main {
-  max-width: var(--max-width);
-  margin: auto;
-  padding: 20px 15px;
+/* FORM ICONS */
+
+.form-line {
+  font-size: 1.1rem;
+  letter-spacing: 0.18em;
 }
 
-/* Карти */
-.card {
-  background: rgba(11, 14, 22, 0.95);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-soft);
-  margin-bottom: 20px;
+/* H2H STATS */
+
+.card h2 + p strong {
+  color: var(--accent-2);
 }
 
-/* Buttons */
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), #57f5ff);
-  padding: 12px 18px;
-  border-radius: 99px;
-  font-weight: 700;
+/* WIN PROBABILITY */
+
+.card:nth-of-type(n) p span.win-team {
+  color: var(--success);
+}
+
+.card:nth-of-type(n) p span.lose-team {
+  color: var(--danger);
+}
+
+/* LINKS & BUTTONS */
+
+a {
+  color: var(--accent);
   text-decoration: none;
-  color: #000;
-  display: inline-block;
 }
 
-/* VS Стил */
-.vs {
-  color: var(--accent-yellow);
-  font-size: 45px;
-  font-weight: bold;
-  text-shadow: 0 0 15px rgba(255,216,0,.6);
+a:hover {
+  text-decoration: underline;
 }
 
-/* Скрол */
-html {
-  scroll-behavior: smooth;
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  margin-top: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: radial-gradient(circle at top left, rgba(0, 224, 255, 0.3), transparent 55%);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0, 224, 255, 0.3);
+  background: radial-gradient(circle at top left, rgba(0, 224, 255, 0.4), transparent 60%);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  main {
+    margin-top: 20px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .card {
+    padding: 16px 16px 16px;
+  }
 }
