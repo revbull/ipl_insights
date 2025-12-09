@@ -251,4 +251,39 @@ subprocess.run(["git", "push"], cwd="..")
 print("\n🎉 ALL DONE! API + JSON + HTML + TELEGRAM POST + AUTO PUSH COMPLETED.")
 from update_rss import generate_rss
 generate_rss(base_url="https://revbull.github.io/ipl-site")
+# ===================================
+# 7) Build Detailed Telegram Message
+# ===================================
+
+telegram_message = f"""🏏 *IPL Match Preview – {TEAM_A} vs {TEAM_B}*
+
+📅 *Date:* {file_date}
+
+🔥 *Team Form*
+• {TEAM_A}: {TEAM_A_FORM}
+• {TEAM_B}: {TEAM_B_FORM}
+
+🏟 *Pitch Report*
+{PITCH_REPORT.strip()}
+
+⭐ *Key Players to Watch*
+"""
+
+for name, meta in KEY_PLAYERS:
+    telegram_message += f"• *{name}* — {meta}\n"
+
+telegram_message += f"""
+
+📈 *Projected Score:*  
+*{PROJECTED_SCORE}*
+
+🔗 *Full Analysis Page:*  
+https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/{file_date}.html
+"""
+
+with open("../telegram/latest_message.txt", "w", encoding="utf-8") as f:
+    f.write(telegram_message)
+
+print("✔ Detailed Telegram message generated")
+
 
