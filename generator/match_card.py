@@ -1,99 +1,132 @@
-from PIL import Image, ImageDraw, ImageFont
-import json
 import os
-from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
 
-def generate_match_card(json_path, output_path):
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
 
-    date = data["date"]
-    team_a = data["teamA"]
-    team_b = data["teamB"]
-    venue = data.get("venue", "T20 Venue")
-    score_range = data["score"]
+# ================================================
+# Helper: measure text width safely using textbbox
+# ================================================
+def text_width(draw, text, font):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    return bbox[2] - bbox[0]
 
-    # Размер за Insta/Telegram (портрет)
+
+# ================================================
+# Helper: detect correct team logo
+# ================================================
+def get_team_logo(team_name):
+    """
+    Attempts to map the team name to a PNG file.
+    If none found → returns None.
+    """
+    mapping = {
+        "mumbai": "mi.png",
+        "chennai": "csk.png",
+        "kolkata": "kkr.png",
+        "sunrisers": "srh.png",
+        "hyderabad": "srh.png",
+        "delhi": "dc.png",
+        "capital": "dc.png",
+        "punjab": "pbks.png",
+        "kings": "pbks.png",
+        "rajasthan": "rr.png",
+        "royal challengers": "rcb.png",
+        "bangalore": "rcb.png",
+        "lucknow": "lsg.png",
+        "gujarat": "gt.png",
+        "titans": "gt.png",
+    }
+
+    team = team_name.lower()
+    for k, file in mapping.items():
+        if k in team:
+            return os.path.join("..", "assets", "img", "logos", file)
+
+    return None  # fallback: no logo found
+
+
+# ================================================
+# MAIN FUNCTION: generate PNG match card
+# ================================================
+def generate_card(data, path):
+    """
+    Creates a polished IPL match card:
+    - Team logos on each side
+    - VS in the center
+    - Clean header
+    - Pillow 10.x compatible
+    """
+
     W, H = 1080, 1350
-    img = Image.new("RGB", (W, H), (5, 6, 10))
+    img = Image.new("RGB", (W, H), (10, 12, 22))
     draw = ImageDraw.Draw(img)
 
-    # лек градиент фон
-    for y in range(H):
-        ratio = y / H
-        r = int(5 + 20 * ratio)
-        g = int(6 + 40 * ratio)
-        b = int(30 + 80 * ratio)
-        draw.line([(0, y), (W, y)], fill=(r, g, b))
-
-    # шрифтове (fallback към default ако нямаш custom)
+    # Load fonts
     try:
-        title_font = ImageFont.truetype("arial.ttf", 80)
-        team_font = ImageFont.truetype("arial.ttf", 72)
-        small_font = ImageFont.truetype("arial.ttf", 32)
-        mid_font = ImageFont.truetype("arial.ttf", 48)
+        font_big = ImageFont.truetype("arial.ttf", 80)
+        font_med = ImageFont.truetype("arial.ttf", 60)
+        font_small = ImageFont.truetype("arial.ttf", 36)
     except:
-        title_font = ImageFont.load_default()
-        team_font = ImageFont.load_default()
-        small_font = ImageFont.load_default()
-        mid_font = ImageFont.load_default()
+        font_big = font_med = font_small = ImageFont.load_default()
 
-    # Заглавие
-    title = "IPL MATCH PREVIEW"
-    tw, th = draw.textsize(title, font=title_font)
-    draw.text(((W - tw) / 2, 80), title, font=title_font, fill=(0, 224, 255))
+    team_a = data["teamA"]
+    team_b = data["teamB"]
 
-    # Дата
-    d_label = datetime.strptime(date, "%Y-%m-%d").strftime("%d %b %Y")
-    draw.text((80, 200), d_label, font=small_font, fill=(200, 200, 210))
+    # --------------------------------------
+    # TITLE
+    # --------------------------------------
+    draw.text((W // 2 - 250, 80), "IPL MATCH", font=font_big, fill=(0, 220, 255))
 
-    # Venue
-    draw.text((80, 240), venue, font=small_font, fill=(180, 180, 195))
+    # --------------------------------------
+    # LOAD LOGOS
+    # --------------------------------------
+    logo_a_path = get_team_logo(team_a)
+    logo_b_path = get_team_logo(team_b)
 
-    # Team A
-    taw, tah = draw.textsize(team_a, font=team_font)
-    draw.text((80, 420), team_a, font=team_font, fill=(245, 245, 247))
+    logo_a = None
+    logo_b = None
 
-    # VS
-    vs = "VS"
-    vsw, vsh = draw.textsize(vs, font=team_font)
-    draw.text(((W - vsw) / 2, 510), vs, font=team_font, fill=(255, 216, 0))
+    if logo_a_path and os.path.exists(logo_a_path):
+        try:
+            logo_a = Image.open(logo_a_path).convert("RGBA")
+            logo_a = logo_a.resize((260, 260), Image.LANCZOS)
+        except:
+            pass
 
-    # Team B
-    tbw, tbh = draw.textsize(team_b, font=team_font)
-    draw.text((W - tbw - 80, 420), team_b, font=team_font, fill=(245, 245, 247))
+    if logo_b_path and os.path.exists(logo_b_path):
+        try:
+            logo_b = Image.open(logo_b_path).convert("RGBA")
+            logo_b = logo_b.resize((260, 260), Image.LANCZOS)
+        except:
+            pass
 
-    # Box за projected score
-    box_w, box_h = 800, 220
-    box_x = (W - box_w) / 2
-    box_y = 750
-    draw.rounded_rectangle(
-        [box_x, box_y, box_x + box_w, box_y + box_h],
-        radius=40,
-        outline=(255, 216, 0),
-        width=4,
-        fill=(15, 15, 25)
-    )
+    # --------------------------------------
+    # PLACE LOGOS
+    # --------------------------------------
+    if logo_a:
+        img.paste(logo_a, (120, 260), logo_a)
 
-    label = "PROJECTED FIRST-INNINGS SCORE"
-    lw, lh = draw.textsize(label, font=small_font)
-    draw.text((W / 2 - lw / 2, box_y + 30), label, font=small_font, fill=(190, 190, 200))
+    if logo_b:
+        img.paste(logo_b, (W - 120 - 260, 260), logo_b)
 
-    sw, sh = draw.textsize(score_range, font=mid_font)
-    draw.text((W / 2 - sw / 2, box_y + 90), score_range, font=mid_font, fill=(255, 216, 0))
+    # --------------------------------------
+    # TEAM NAMES
+    # --------------------------------------
+    # Left team
+    draw.text((140, 550), team_a.upper(), font=font_med, fill="white")
 
-    caption = "Analysis only · For cricket fans"
-    cw, ch = draw.textsize(caption, font=small_font)
-    draw.text((W / 2 - cw / 2, box_y + 150), caption, font=small_font, fill=(170, 170, 185))
+    # Right team — calculate width
+    t_width = text_width(draw, team_b.upper(), font_med)
+    draw.text((W - 140 - t_width, 550), team_b.upper(), font=font_med, fill="white")
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    img.save(output_path, format="PNG")
-    print("✔ Match card generated:", output_path)
+    # --------------------------------------
+    # VS TEXT
+    # --------------------------------------
+    draw.text((W // 2 - 40, 530), "VS", font=font_big, fill=(255, 210, 0))
 
+    # --------------------------------------
+    # SAVE FINAL PNG
+    # --------------------------------------
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    img.save(path, "PNG")
 
-if __name__ == "__main__":
-    # използваме последния json: data/YYYY-MM-DD.json
-    today = datetime.now().strftime("%Y-%m-%d")
-    json_path = f"../data/{today}.json"
-    out_path = f"../assets/img/cards/{today}.png"
-    generate_match_card(json_path, out_path)
+    print("✔ Match card saved with team logos:", path)
