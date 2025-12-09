@@ -1,4 +1,7 @@
 name: Generate IPL Match + Deploy
+permissions:
+  contents: write
+
 
 on:
   workflow_dispatch:          # позволява ръчно пускане
