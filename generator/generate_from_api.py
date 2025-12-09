@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIGURATION
 # =============================
 
-API_KEY = "YOUR_API_KEY_HERE"
+API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"
 BASE_URL = "https://api.cricapi.com/v1"
 
 TODAY = datetime.utcnow().strftime("%Y-%m-%d")
@@ -58,6 +58,75 @@ def auto_pitch_report(venue):
         if k.lower() in venue.lower():
             return v
     return "Balanced T20 wicket. Expected RR 7.8 – 8.4."
+
+def fetch_h2h_stats(team_a, team_b):
+    """
+    Търси в API исторически мачове между двата отбора.
+    Ако API е ограничен, ще дава fallback H2H.
+    """
+
+    try:
+        url = f"https://api.cricapi.com/v1/cricScore?apikey={API_KEY}"
+        res = requests.get(url).json().get("data", [])
+
+        h2h_matches = [
+            m for m in res
+            if team_a.lower() in m.get("t1","").lower() and team_b.lower() in m.get("t2","").lower()
+            or team_b.lower() in m.get("t1","").lower() and team_a.lower() in m.get("t2","").lower()
+        ]
+
+        if not h2h_matches:
+            raise Exception("No H2H data found")
+
+        total = len(h2h_matches)
+        wins_a = sum(1 for m in h2h_matches if m.get("winner","").lower() == team_a.lower())
+        wins_b = sum(1 for m in h2h_matches if m.get("winner","").lower() == team_b.lower())
+
+        last_5 = h2h_matches[-5:] if len(h2h_matches) >= 5 else h2h_matches
+
+        last_5_a = sum(1 for m in last_5 if m.get("winner","").lower() == team_a.lower())
+        last_5_b = sum(1 for m in last_5 if m.get("winner","").lower() == team_b.lower())
+
+        # Средни тотали
+        totals = []
+        for m in h2h_matches:
+            for k in ["t1s","t2s"]:
+                score = m.get(k,"0/0")
+                try:
+                    runs = int(score.split("/")[0])
+                    totals.append(runs)
+                except:
+                    pass
+
+        avg_total = sum(totals) / len(totals) if totals else 160
+
+        highest = max(totals) if totals else 200
+        lowest = min(totals) if totals else 120
+
+        return {
+            "total": total,
+            "wins_a": wins_a,
+            "wins_b": wins_b,
+            "last5_a": last_5_a,
+            "last5_b": last_5_b,
+            "avg_total": int(avg_total),
+            "highest": highest,
+            "lowest": lowest
+        }
+
+    except Exception:
+        # FALLBACK ако API няма данни
+        return {
+            "total": 12,
+            "wins_a": 6,
+            "wins_b": 6,
+            "last5_a": 2,
+            "last5_b": 3,
+            "avg_total": 165,
+            "highest": 210,
+            "lowest": 120
+        }
+
 
 # =============================
 # FETCH LIVE IPL MATCH
@@ -134,6 +203,11 @@ TEAM_B_FORM = "L W L L W"
 
 print(f"✔ Using match: {TEAM_A} vs {TEAM_B} ({match_type}) — {MATCH_DATE}")
 
+print("⏳ Fetching H2H statistics...")
+H2H = fetch_h2h_stats(TEAM_A, TEAM_B)
+print("✔ H2H stats ready")
+
+
 # =============================
 # AUTO KEY PLAYERS (fallback logic)
 # =============================
@@ -155,6 +229,7 @@ PITCH_REPORT = auto_pitch_report(VENUE)
 # =============================
 
 json_data = {
+    "h2h": H2H,
     "date": MATCH_DATE,
     "teamA": TEAM_A,
     "teamB": TEAM_B,
