@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+    <title>IPL Match Analytics Feed</title>
+    <link>https://revbull.github.io/ipl-site</link>
+    <description>Daily IPL match previews, pitch reports, H2H and projections.</description>
+    <language>en</language>
+
+    <item>
+        <title>IPL Match – 2025-12-09</title>
+        <link>https://revbull.github.io/ipl-site/matches/2025-12-09.html</link>
+        <guid>https://revbull.github.io/ipl-site/matches/2025-12-09.html</guid>
+        <pubDate>Tue, 09 Dec 2025 12:00:00 GMT</pubDate>
+        <description>IPL match preview and analytics for 2025-12-09.</description>
+    </item>
+</channel>
+</rss>

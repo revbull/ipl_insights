@@ -1,0 +1,26 @@
+{
+    "date": "2025-12-09",
+    "teamA": "Team A",
+    "teamB": "Team B",
+    "venue": "Unknown Stadium",
+    "formA": "W L W W L",
+    "formB": "L W L L W",
+    "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
+    "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
+    "pitch": "Balanced T20 wicket. Expected RR 7.8 \u2013 8.4.",
+    "score": "155 \u2013 185 runs",
+    "h2h": {
+        "total": 10,
+        "wins_a": 5,
+        "wins_b": 5,
+        "last5_a": 2,
+        "last5_b": 3,
+        "avg_total": 165,
+        "highest": 210,
+        "lowest": 130
+    },
+    "prediction": {
+        "teamA_win_pct": 54,
+        "teamB_win_pct": 45
+    }
+}
