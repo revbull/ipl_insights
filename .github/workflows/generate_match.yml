@@ -30,6 +30,12 @@ jobs:
         run: |
           cd generator
           python3 generate_from_api.py
+          
+                - name: Generate match card image
+        run: |
+          cd generator
+          python3 match_card.py
+
 
       - name: Commit changes
         run: |
