@@ -63,6 +63,44 @@ img.match-image {
     text-decoration: none;
     margin: 25px 0;
 }
+    /* TEAM LOGO STYLE */
+.team-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 15px 0 10px;
+}
+
+.team-logos img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
+/* STICKY CTA (mobile-first) */
+.sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffb100;
+    color: #000;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    border-top: 3px solid #000;
+    z-index: 9999;
+}
+
+@media(min-width: 768px) {
+    .sticky-cta {
+        display: none;
+    }
+}
+
 </style>
 
 </head>
@@ -78,6 +116,8 @@ img.match-image {
     <div class="card" id="main-info">
         <h2>Loading match...</h2>
     </div>
+   
+    <div class="team-logos" id="team-logos"></div>
 
     <div class="card" id="match-card-img"></div>
 
@@ -102,6 +142,45 @@ fetch("data/latest.json")
             <p><strong>Date:</strong> ${data.date}</p>
             <p><strong>Venue:</strong> ${data.venue}</p>
         `;
+        // TEAM LOGO MAP (expand anytime)
+const LOGOS = {
+    "MI": "assets/img/logos/mi.png",
+    "Mumbai Indians": "assets/img/logos/mi.png",
+
+    "RCB": "assets/img/logos/rcb.png",
+    "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
+
+    "CSK": "assets/img/logos/csk.png",
+    "Chennai Super Kings": "assets/img/logos/csk.png",
+
+    "KKR": "assets/img/logos/kkr.png",
+    "Kolkata Knight Riders": "assets/img/logos/kkr.png",
+
+    "SRH": "assets/img/logos/srh.png",
+    "Sunrisers Hyderabad": "assets/img/logos/srh.png",
+
+    "DC": "assets/img/logos/dc.png",
+    "Delhi Capitals": "assets/img/logos/dc.png",
+
+    "GT": "assets/img/logos/gt.png",
+    "Gujarat Titans": "assets/img/logos/gt.png",
+
+    "LSG": "assets/img/logos/lsg.png",
+    "Lucknow Super Giants": "assets/img/logos/lsg.png",
+
+    // Generic fallback
+    "default": "assets/img/logos/default.png"
+};
+
+function getLogo(team) {
+    return LOGOS[team] || LOGOS["default"];
+}
+
+// Inject logos
+document.getElementById("team-logos").innerHTML = `
+    <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
+    <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
+`;
 
         // MATCH CARD IMAGE
         document.getElementById("match-card-img").innerHTML = `
@@ -137,6 +216,8 @@ fetch("data/latest.json")
         document.getElementById("cta1").href = "YOUR_AFFILIATE_LINK_HERE";
         document.getElementById("cta2").href = "YOUR_AFFILIATE_LINK_HERE";
     })
+        document.getElementById("sticky-cta").href = "YOUR_AFFILIATE_LINK_HERE";
+
     .catch(err => {
         document.getElementById("main-info").innerHTML = `
             <h2>Error loading match data</h2>
@@ -144,6 +225,10 @@ fetch("data/latest.json")
         `;
     });
 </script>
+    
+<a id="sticky-cta" class="sticky-cta" href="#" target="_blank">
+    Claim Your Bonus
+</a>
 
 </body>
 </html>
