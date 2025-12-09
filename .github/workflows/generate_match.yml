@@ -2,7 +2,7 @@ name: Daily IPL Match Generator
 
 on:
   schedule:
-    - cron: "30 3 * * *"   # 09:00 IST = 03:30 UTC
+    - cron: "30 3 * * *"   # 09:00 IST
   workflow_dispatch:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
         run: |
           pip install requests pillow feedparser
 
-      - name: Run generator
+      - name: Run generator script
         run: |
           cd generator
           python3 generate_from_api.py
@@ -35,15 +35,18 @@ jobs:
           git commit -m "Auto-generated IPL match for $(date +'%Y-%m-%d')" || echo "No changes"
           git push
 
-      # -------------------------------
-      # 🔥 Auto-post to Telegram Channel
-      # -------------------------------
+      # ----------------------------------------------------
+      # 🔥 POST TO TELEGRAM — VALID SINGLE 'run' BLOCK
+      # ----------------------------------------------------
       - name: Post to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
           MESSAGE=$(cat telegram/latest_message.txt)
           curl -X POST \
             -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "chat_id=${{ secrets.TELEGRAM_CHANNEL_ID }}" \
+            -d "chat_id=${TELEGRAM_CHANNEL_ID}" \
             -d "parse_mode=Markdown" \
             --data-urlencode "text=$MESSAGE" \
-            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage
+            https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
