@@ -303,6 +303,13 @@ os.makedirs("../data", exist_ok=True)
 with open(f"../data/{MATCH_DATE}.json", "w") as f:
     json.dump(json_data, f, indent=4)
 
+# Write latest.json (always points to the newest match)
+with open("../data/latest.json", "w") as f:
+    json.dump(json_data, f, indent=4)
+
+print("✔ latest.json updated")
+
+
 
 # =============================
 # CARD GENERATION
