@@ -1,426 +1,312 @@
 import os
 import json
 import subprocess
-from datetime import datetime
 import requests
+from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
+
+# ============================
+# CONFIG
+# ============================
+
+API_KEY = "YOUR_API_KEY_HERE"
+BASE_URL = "https://api.cricapi.com/v1"
+
+# ============================
+# UTIL FUNCTIONS
+# ============================
 
 def parse_form(form_str: str) -> float:
-    """
-    Превръща нещо като 'W L W W L' в числова форма между -1 и +1.
-    """
     form_str = form_str.replace(",", " ").upper()
     tokens = [t for t in form_str.split() if t in ("W", "L", "D")]
     if not tokens:
-        return 0.0
+        return 0
     score = 0
     for t in tokens:
-        if t == "W":
-            score += 1
-        elif t == "L":
-            score -= 1
-        # D = 0
+        if t == "W": score += 1
+        elif t == "L": score -= 1
     return score / len(tokens)
 
 
 def estimate_projected_score(venue: str, form_a: str, form_b: str) -> str:
-    """
-    Връща string range, напр. '170 – 188 runs', на база стадион + форма.
-    """
     v = (venue or "").lower()
 
-    # базов mid според стадиона
-    if any(k in v for k in ["chinnaswamy", "wankhede", "eden gardens"]):
-        base_mid = 185
-        spread = 18
+    if any(k in v for k in ["chinnaswamy", "wankhede", "eden"]):
+        base_mid = 185; spread = 18
     elif any(k in v for k in ["chepauk", "arun jaitley", "delhi"]):
-        base_mid = 160
-        spread = 14
-    elif "narendra modi" in v or "motera" in v:
-        base_mid = 175
-        spread = 16
+        base_mid = 160; spread = 14
+    elif "narendra modi" in v:
+        base_mid = 175; spread = 16
     else:
-        base_mid = 170
-        spread = 15
+        base_mid = 170; spread = 15
 
-    # форма на отборите
-    fa = parse_form(form_a)
-    fb = parse_form(form_b)
-    momentum = (fa + fb) / 2  # между -1 и +1
-
-    # корекция по форма (+/- 8 runs макс)
+    momentum = (parse_form(form_a) + parse_form(form_b)) / 2
     mid = base_mid + int(momentum * 8)
 
-    low = mid - spread
-    high = mid + spread
-
-    # ограничение
-    low = max(130, low)
-    high = min(230, high)
+    low = max(130, mid - spread)
+    high = min(230, mid + spread)
 
     return f"{low} – {high} runs"
 
 
-# ============================
-# CONFIG – попълваш това
-# ============================
-
-API_KEY = "YOUR_API_KEY_HERE"
-API_ENDPOINT = "https://example-cricket-api.com/fixtures"  # смени с реален endpoint
-IPL_LEAGUE_ID = 1234  # ID на IPL лигата в избрания API
-
-# Default стойности, ако API не върне нищо
-DEFAULT_PITCH_REPORT = """
-Balanced T20 surface with decent carry.
-Expected run rate: around 7.8 – 8.5.
-Weather: generally clear, minimal dew expected.
-"""
-
-PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
-print("✔ Auto projected score:", PROJECTED_SCORE)
+def auto_pitch_report(venue):
+    pitch_map = {
+        "Wankhede": "High-scoring pitch with bounce, 180+ possible.",
+        "Eden": "Flat early but spin helps later.",
+        "Chinnaswamy": "Very small boundaries, 200+ common.",
+        "Chepauk": "Slow surface, spin-friendly, low scoring.",
+        "Narendra Modi": "Balanced wicket with early seam movement.",
+        "Arun Jaitley": "Two-paced Delhi pitch, difficult strokeplay."
+    }
+    for k, v in pitch_map.items():
+        if k.lower() in venue.lower():
+            return v
+    return "Balanced T20 wicket. Expected RR 7.8 – 8.4."
 
 
 # ============================
-# 1) Взимане на днешен мач от API
+# FETCH MATCH FROM API
 # ============================
 
-today = datetime.utcnow().strftime("%Y-%m-%d")  # формат YYYY-MM-DD
+print("⏳ Fetching today's matches...")
 
-params = {
-    "date": today,
-    "league": IPL_LEAGUE_ID,
-    "apikey": API_KEY,
-}
-
-print("⏳ Fetching fixtures from API...")
+today_api = datetime.utcnow().strftime("%Y-%m-%d")
+matches_url = f"{BASE_URL}/currentMatches?apikey={API_KEY}"
 
 try:
-    resp = requests.get(API_ENDPOINT, params=params, timeout=15)
-    resp.raise_for_status()
-    data = resp.json()
-except Exception as e:
-    print("❌ Error calling API:", e)
-    print("Using fallback teams...")
-    data = None
+    resp = requests.get(matches_url).json()
+    all_matches = resp.get("data", [])
+except:
+    all_matches = []
 
-TEAM_A = "Team A"
-TEAM_B = "Team B"
-TEAM_A_FORM = "W L W W L"
-TEAM_B_FORM = "L W L L W"
-PITCH_REPORT = DEFAULT_PITCH_REPORT
-PROJECTED_SCORE = DEFAULT_PROJECTED_SCORE
+ipl_matches = [m for m in all_matches if "Indian Premier League" in m.get("series", "")]
+match = ipl_matches[0] if ipl_matches else None
 
-KEY_PLAYERS = [
-    ("Player 1 (Team A)", "Impact player"),
-    ("Player 2 (Team B)", "Powerplay threat"),
-]
+if not match:
+    print("⚠ No IPL match found today.")
+    TEAM_A = "Team A"; TEAM_B = "Team B"; VENUE = "Unknown Stadium"
+    TEAM_A_FORM = "W L W W L"; TEAM_B_FORM = "L W L L W"
+else:
+    TEAM_A, TEAM_B = match["teams"][0], match["teams"][1]
+    VENUE = match.get("venue", "Stadium")
+    TEAM_A_FORM = "W L W W L"
+    TEAM_B_FORM = "L W L L W"
 
-if data:
-    # Тук трябва да адаптираш според формата на твоя API
-    # Примерна структура: {"fixtures": [ { "home_team": "...", "away_team": "..." }, ... ]}
-    fixtures = data.get("fixtures") or data.get("response") or []
+print(f"✔ Match: {TEAM_A} vs {TEAM_B} at {VENUE}")
 
-    if fixtures:
-        match = fixtures[0]  # взимаме първия мач за деня
-
-        # Примерно – смени с реалните ключове от API
-        TEAM_A = match.get("home_team") or match.get("team_home") or "Team A"
-        TEAM_B = match.get("away_team") or match.get("team_away") or "Team B"
-
-        # Ако API дава форма – може да я ползваш, иначе оставяш дефолт
-        TEAM_A_FORM = match.get("home_form", TEAM_A_FORM)
-        TEAM_B_FORM = match.get("away_form", TEAM_B_FORM)
-
-        # Можеш да извлечеш и стадион, град и т.н.
-        venue = match.get("venue") or match.get("stadium") or ""
-        if venue:
-            # ============================
-# AUTO PITCH REPORT BY VENUE
 # ============================
-
-venue_name = match.get("venue") or match.get("stadium") or "Unknown"
-
-pitch_map = {
-    "Wankhede": "High-scoring batting-friendly pitch with bounce. Expect 180+ if top order settles.",
-    "Eden Gardens": "Excellent batting surface early, but spinners get help after 12–14 overs.",
-    "Chepauk": "Slow, spin-heavy surface. Difficult for batters, expect lower totals.",
-    "Narendra Modi": "Balanced wicket with early seam movement. Settles into good batting conditions.",
-    "Chinnaswamy": "Very small boundaries, extremely high scoring ground. 200+ not uncommon.",
-    "Arun Jaitley": "Slow Delhi wicket, two-paced, challenging for aggressive batting."
-}
-
-# Default pitch logic if venue not recognized
-DEFAULT_PITCH = "Balanced T20 wicket. Expected run rate around 7.8 – 8.4. Clear weather conditions."
-
-PITCH_REPORT = None
-
-for key in pitch_map:
-    if key.lower() in venue_name.lower():
-        PITCH_REPORT = pitch_map[key]
-        break
-
-if not PITCH_REPORT:
-    PITCH_REPORT = DEFAULT_PITCH
-
-print(f"✔ Auto pitch report based on venue: {venue_name}")
-
-            # ============================
-# AUTO KEY PLAYERS FROM API
+# FETCH SQUAD FOR KEY PLAYERS
 # ============================
 
 KEY_PLAYERS = []
 
-try:
-    # Пример: API endpoint за lineup / squad
-    squad_endpoint = "https://example-cricket-api.com/squad"
+if match:
+    squad_url = f"{BASE_URL}/match_info?apikey={API_KEY}&id={match['id']}"
+    try:
+        squad_data = requests.get(squad_url).json().get("data", {})
+        players = squad_data.get("players", [])
+    except:
+        players = []
+else:
+    players = []
 
-    squad_params = {
-        "match_id": match.get("id"),
-        "apikey": API_KEY
-    }
+players_a = [p for p in players if p.get("teamName") == TEAM_A]
+players_b = [p for p in players if p.get("teamName") == TEAM_B]
 
-    print("⏳ Fetching squad / player stats...")
-    sq = requests.get(squad_endpoint, params=squad_params).json()
+def select_top(players_list, team_tag):
+    if not players_list:
+        return []
+    bats = sorted([p for p in players_list if "BAT" in p.get("role","").upper()],
+                  key=lambda x: x.get("strikeRate", 0), reverse=True)
+    bowl = sorted([p for p in players_list if "BOWL" in p.get("role","").upper()],
+                  key=lambda x: x.get("wickets", 0), reverse=True)
 
-    players_home = sq.get("home_team_players", [])
-    players_away = sq.get("away_team_players", [])
+    out = []
+    if bats: 
+        out.append((f"{bats[0]['name']} ({team_tag})", "Top batsman"))
+    if len(bats) > 1: 
+        out.append((f"{bats[1]['name']} ({team_tag})", "Consistent batsman"))
+    if bowl: 
+        out.append((f"{bowl[0]['name']} ({team_tag})", "Wicket taker"))
+    return out
 
-    # Взимаме топ 2 батсмени и топ 1 боулър от API
-    def extract_key_players(players, team_short):
-        bat_sorted = sorted(players, key=lambda x: x.get("strike_rate", 0), reverse=True)
-        bowl_sorted = sorted(players, key=lambda x: x.get("wickets", 0), reverse=True)
+KEY_PLAYERS = select_top(players_a, TEAM_A) + select_top(players_b, TEAM_B)
 
-        result = []
-        if len(bat_sorted) > 0:
-            result.append((f"{bat_sorted[0]['name']} ({team_short})", "Top batsman by SR"))
-        if len(bat_sorted) > 1:
-            result.append((f"{bat_sorted[1]['name']} ({team_short})", "Reliable top-order contributor"))
-        if len(bowl_sorted) > 0:
-            result.append((f"{bowl_sorted[0]['name']} ({team_short})", "Key wicket-taking bowler"))
-
-        return result
-
-    KEY_PLAYERS.extend(extract_key_players(players_home, TEAM_A))
-    KEY_PLAYERS.extend(extract_key_players(players_away, TEAM_B))
-
-    print("✔ Key players extracted from API.")
-
-except Exception as e:
-    print("⚠ Could not fetch auto key players, using fallback.", e)
+if not KEY_PLAYERS:
     KEY_PLAYERS = [
-        ("Top Player A", "Impact batsman"),
-        ("Top Player B", "Key bowler"),
-        ("Top Player C", "Consistent performer")
+        ("Star Player 1", "Impact batsman"),
+        ("Star Player 2", "Key bowler")
     ]
 
-            PITCH_REPORT = f"""
-Balanced T20 surface at {venue}.
-Expected run rate: around 7.8 – 8.5.
-Weather: generally clear, minimal dew expected.
-"""
-        print(f"✔ Match found: {TEAM_A} vs {TEAM_B}")
-    else:
-        print("⚠ No fixtures found for today – using fallback values.")
-else:
-    print("⚠ No data from API – using fallback values.")
+# ============================
+# AUTO SCORE + PITCH REPORT
+# ============================
 
-# ===================================
-# AUTO: Date & filenames
-# ===================================
+PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
+PITCH_REPORT = auto_pitch_report(VENUE)
 
-file_date = datetime.now().strftime("%Y-%m-%d")  # локална дата за имената
-html_file = f"../matches/{file_date}.html"
-json_file = f"../data/{file_date}.json"
-telegram_file = f"../telegram/{file_date}.txt"
+# ============================
+# SAVE JSON
+# ============================
 
-# ===================================
-# 2) JSON DATA GENERATION
-# ===================================
+file_date = datetime.now().strftime("%Y-%m-%d")
 
-match_data = {
+json_data = {
     "date": file_date,
     "teamA": TEAM_A,
     "teamB": TEAM_B,
+    "venue": VENUE,
     "formA": TEAM_A_FORM,
     "formB": TEAM_B_FORM,
-    "pitch": PITCH_REPORT.strip(),
+    "pitch": PITCH_REPORT,
     "players": [{"name": n, "meta": m} for n, m in KEY_PLAYERS],
     "score": PROJECTED_SCORE
 }
 
 os.makedirs("../data", exist_ok=True)
 
-with open(json_file, "w", encoding="utf-8") as f:
-    json.dump(match_data, f, indent=4)
+with open(f"../data/{file_date}.json", "w", encoding="utf-8") as f:
+    json.dump(json_data, f, indent=4)
 
-print(f"✔ JSON created: {json_file}")
+print("✔ JSON saved")
 
-# ===================================
-# 3) HTML PAGE GENERATION
-# ===================================
+# ============================
+# GENERATE MATCH CARD IMAGE
+# ============================
 
-html_template = f"""<!DOCTYPE html>
-<html lang="en">
+def generate_card(data, path):
+    W, H = 1080, 1350
+    img = Image.new("RGB", (W, H), (5, 6, 10))
+    draw = ImageDraw.Draw(img)
+
+    # Gradient background
+    for y in range(H):
+        shade = int(10 + (y / H) * 60)
+        draw.line([(0, y), (W, y)], fill=(shade, shade, shade+20))
+
+    try:
+        font_big = ImageFont.truetype("arial.ttf", 80)
+        font_med = ImageFont.truetype("arial.ttf", 60)
+        font_small = ImageFont.truetype("arial.ttf", 38)
+    except:
+        font_big = font_med = font_small = ImageFont.load_default()
+
+    # Title
+    draw.text((W//2 - 250, 80), "IPL MATCH", font=font_big, fill=(0,220,255))
+
+    # Teams
+    draw.text((80, 300), data["teamA"], font=font_med, fill=(255,255,255))
+    draw.text((W - 80 - draw.textsize(data["teamB"], font=font_med)[0], 300),
+              data["teamB"], font=font_med, fill=(255,255,255))
+
+    draw.text((W//2 - 40, 370), "VS", font=font_big, fill=(255,210,0))
+
+    # Venue
+    draw.text((80, 450), data["venue"], font=font_small, fill=(200,200,210))
+
+    # Score box
+    box_y = 600
+    draw.rectangle([80, box_y, W-80, box_y+240], outline=(255,210,0), width=4)
+
+    draw.text((W//2 - 200, box_y+40), "Projected Score:", font=font_small, fill=(255,255,255))
+    draw.text((W//2 - 120, box_y+120), data["score"], font=font_med, fill=(255,210,0))
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    img.save(path, "PNG")
+
+card_path = f"../assets/img/cards/{file_date}.png"
+generate_card(json_data, card_path)
+print("✔ Match card created:", card_path)
+
+# ============================
+# HTML PAGE
+# ============================
+
+os.makedirs("../matches", exist_ok=True)
+
+html = f"""<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>{TEAM_A} vs {TEAM_B} — IPL Match Preview</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-
 <body>
-  <main>
-    
-    <h1>{TEAM_A} vs {TEAM_B} — IPL Match Preview</h1>
-    <p style="color:#a3a7b5">Match Date: {file_date}</p>
+<main>
 
-    <div class="card">
-      <h2>Teams</h2>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <h3>{TEAM_A}</h3>
-          <p>Form: {TEAM_A_FORM}</p>
-        </div>
+<div style="max-width:600px;margin:0 auto 24px;">
+  <img src="../assets/img/cards/{file_date}.png" 
+       style="width:100%;border-radius:24px;box-shadow:0 18px 45px rgba(0,0,0,.7);" />
+</div>
 
-        <div class="vs">VS</div>
+<h1>{TEAM_A} vs {TEAM_B}</h1>
+<p><strong>Date:</strong> {file_date}</p>
+<p><strong>Venue:</strong> {VENUE}</p>
 
-        <div>
-          <h3>{TEAM_B}</h3>
-          <p>Form: {TEAM_B_FORM}</p>
-        </div>
-      </div>
-    </div>
+<div class="card">
+  <h2>Pitch Report</h2>
+  <p>{PITCH_REPORT}</p>
+</div>
 
-    <div class="card">
-      <h2>Pitch Report</h2>
-      <p>{PITCH_REPORT}</p>
-    </div>
-
-    <div class="card">
-      <h2>Key Players</h2>
-      <ul>
+<div class="card">
+  <h2>Key Players</h2>
+  <ul>
 """
 
 for name, meta in KEY_PLAYERS:
-    html_template += f"        <li><strong>{name}</strong> — {meta}</li>\n"
+    html += f"<li><strong>{name}</strong> — {meta}</li>\n"
 
-html_template += f"""
-      </ul>
-    </div>
+html += f"""
+  </ul>
+</div>
 
-    <div class="card">
-      <h2>Projected Score (Analysis Only)</h2>
-      <div class="score-box">
-        <div class="score-box-value" style="font-size:40px;margin:10px 0;">
-          {PROJECTED_SCORE}
-        </div>
-      </div>
-      <p style="color:#a3a7b5;margin-top:10px;">
-        Projection is for informational purposes only.
-      </p>
-    </div>
+<div class="card">
+<h2>Projected Score</h2>
+<p>{PROJECTED_SCORE}</p>
+</div>
 
-    <p style="font-size:12px;color:#a3a7b5;margin-top:20px;">
-      Some cricket fans explore external platforms for match data.
-      If affiliate links appear, this site may earn a small commission.
-    </p>
-
-    <a href="../index.html" class="btn-primary">Back to Main Page</a>
-
-  </main>
+</main>
 </body>
 </html>
 """
 
-os.makedirs("../matches", exist_ok=True)
+with open(f"../matches/{file_date}.html","w",encoding="utf-8") as f:
+    f.write(html)
 
-with open(html_file, "w", encoding="utf-8") as f:
-    f.write(html_template)
+print("✔ HTML page created")
 
-print(f"✔ HTML created: {html_file}")
+# ============================
+# TELEGRAM MESSAGE
+# ============================
 
-# ===================================
-# 4) TELEGRAM POST GENERATION
-# ===================================
+telegram_msg = f"""🏏 *IPL Match Preview – {TEAM_A} vs {TEAM_B}*
 
-telegram_post = f"""🏏 **IPL Match Preview — {TEAM_A} vs {TEAM_B}**
+📅 *{file_date}*
+🏟 *{VENUE}*
 
-📅 Date: {file_date}
-
-🔥 **Team Form**
-• {TEAM_A}: {TEAM_A_FORM}  
-• {TEAM_B}: {TEAM_B_FORM}
-
-🏟 **Pitch Report**
-{PITCH_REPORT.strip()}
-
-⭐ **Key Players**
+🔥 *Key Players:*
 """
 
 for name, meta in KEY_PLAYERS:
-    telegram_post += f"• **{name}** — {meta}\n"
+    telegram_msg += f"• *{name}* — {meta}\n"
 
-telegram_post += f"""
+telegram_msg += f"""
 
-📈 **Projected Score (Analysis Only):**  
-**{PROJECTED_SCORE}**
+📈 *Projected Score:* {PROJECTED_SCORE}
 
-🔗 Full analysis:
-https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/{file_date}.html
+🔗 More details:
+https://revbull.github.io/ipl-site/matches/{file_date}.html
 """
 
 os.makedirs("../telegram", exist_ok=True)
 
-with open(telegram_file, "w", encoding="utf-8") as f:
-    f.write(telegram_post)
+with open("../telegram/latest_message.txt","w",encoding="utf-8") as f:
+    f.write(telegram_msg)
 
-print(f"✔ Telegram post created: {telegram_file}")
+print("✔ Telegram message saved")
 
-# ===================================
-# 5) AUTO GIT COMMIT + PUSH
-# ===================================
+# ============================
+# (OPTIONAL) GIT PUSH
+# ============================
 
-print("⏳ Committing changes to Git...")
-
-subprocess.run(["git", "add", "."], cwd="..")
-subprocess.run(["git", "commit", "-m", f"Add API-based match page for {file_date}"], cwd="..")
-subprocess.run(["git", "push"], cwd="..")
-
-print("\n🎉 ALL DONE! API + JSON + HTML + TELEGRAM POST + AUTO PUSH COMPLETED.")
-from update_rss import generate_rss
-generate_rss(base_url="https://revbull.github.io/ipl-site")
-# ===================================
-# 7) Build Detailed Telegram Message
-# ===================================
-
-telegram_message = f"""🏏 *IPL Match Preview – {TEAM_A} vs {TEAM_B}*
-
-📅 *Date:* {file_date}
-
-🔥 *Team Form*
-• {TEAM_A}: {TEAM_A_FORM}
-• {TEAM_B}: {TEAM_B_FORM}
-
-🏟 *Pitch Report*
-{PITCH_REPORT.strip()}
-
-⭐ *Key Players to Watch*
-"""
-
-for name, meta in KEY_PLAYERS:
-    telegram_message += f"• *{name}* — {meta}\n"
-
-telegram_message += f"""
-
-📈 *Projected Score:*  
-*{PROJECTED_SCORE}*
-
-🔗 *Full Analysis Page:*  
-https://YOUR_GITHUB_USERNAME.github.io/ipl-site/matches/{file_date}.html
-"""
-
-with open("../telegram/latest_message.txt", "w", encoding="utf-8") as f:
-    f.write(telegram_message)
-
-print("✔ Detailed Telegram message generated")
-
-
+print("✔ Generator finished successfully.")
