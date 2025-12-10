@@ -1004,24 +1004,6 @@
   </script>
   <script>
 <script>
-function renderLiveWidget(data) {
-  const box = document.getElementById("sidebar-content");
-
-  const t1 = data.teamA || "Team A";
-  const t2 = data.teamB || "Team B";
-
-  const scoreA = data.live?.t1s || "-";
-  const scoreB = data.live?.t2s || "-";
-
-  // AI probabilities
-  const pa = data.ml_probability?.teamA_prob || 50;
-  const pb = data.ml_probability?.teamB_prob || 50;
-
-  const total = pa + pb || 1;
-
-  // Normalize to %
-  const pA = Math.round((pa / total) * 100);
-  const pB = 100 - pA;
 
   box.innerHTML = `
       <div style="font-size:14px;font-weight:600;margin-bottom:6px;">
@@ -1062,6 +1044,77 @@ function renderLiveWidget(data) {
   const aff = "YOUR_AFFILIATE_LINK_HERE";
   document.getElementById("sidebar-cta").href = aff;
 }
+    <script>
+function renderLiveWidget(data) {
+  const box = document.getElementById("sidebar-content");
+
+  const t1 = data.teamA || "Team A";
+  const t2 = data.teamB || "Team B";
+
+  const scoreA = data.live?.t1s || "-";
+  const scoreB = data.live?.t2s || "-";
+
+  // AI probabilities
+  const pa = data.ml_probability?.teamA_prob || 50;
+  const pb = data.ml_probability?.teamB_prob || 50;
+
+  const total = pa + pb || 1;
+  const pA = Math.round((pa / total) * 100);
+  const pB = 100 - pA;
+
+  box.innerHTML = `
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">
+        ${t1} vs ${t2}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:4px;">
+        <strong>${t1}</strong>: ${scoreA}
+      </div>
+
+      <div style="font-size:13px;margin-bottom:8px;">
+        <strong>${t2}</strong>: ${scoreB}
+      </div>
+
+      <!-- WIN PROBABILITY -->
+      <div style="margin-top:14px;">
+        <h4 style="font-size:13px;margin-bottom:6px;color:var(--accent);">
+          Win Probability
+        </h4>
+
+        <div class="wp-bar">
+          <div id="wp-teamA" class="wp-segment" style="width:${pA}%;"></div>
+          <div id="wp-teamB" class="wp-segment" style="width:${pB}%;"></div>
+        </div>
+
+        <div class="wp-labels">
+          <span>${t1}: ${pA}%</span>
+          <span>${t2}: ${pB}%</span>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
+        * AI estimation · auto-updates
+      </div>
+  `;
+
+  // CTA link
+  document.getElementById("sidebar-cta").href = "YOUR_AFFILIATE_LINK_HERE";
+}
+
+function loadLiveScore() {
+  fetch("data/latest.json")
+    .then(r => r.json())
+    .then(data => renderLiveWidget(data))
+    .catch(() => {
+      document.getElementById("sidebar-content").innerHTML =
+        "<p style='opacity:0.6;'>No live data</p>";
+    });
+}
+
+loadLiveScore();
+setInterval(loadLiveScore, 60000);
+</script>
+
 
 function loadLiveScore() {
   fetch("data/latest.json")
