@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     name="description"
-    content="Live cricket insights: AI win probability, projected score, team form, pitch report, and dynamic analysis. Auto-updated match previews for IPL, ILT20, BBL, PSL and SA20."
+    content="Live cricket insights: AI win probability, projected score, team form, pitch report, and dynamic analysis. Auto-updated match previews for top T20 leagues."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,576 +15,298 @@
     rel="stylesheet"
   />
 
-<style>
-/* -------------------------------------------------------------------
-   ROOT DESIGN SYSTEM
--------------------------------------------------------------------*/
-:root {
-  --bg-main: #05060a;
-  --bg-card: #10121a;
-  --bg-soft: #171a23;
-  --accent: #00e0ff;
-  --accent-soft: rgba(0, 224, 255, 0.12);
-  --accent-yellow: #ffd800;
-  --text-main: #f5f5f7;
-  --text-muted: #a3a7b5;
-  --border-subtle: #262a37;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
-  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
-  --transition-fast: 0.18s ease-out;
-  --max-width: 1120px;
-}
-
-/* -------------------------------------------------------------------
-   GLOBAL
--------------------------------------------------------------------*/
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Montserrat", system-ui, sans-serif;
-  background: radial-gradient(circle at top, #161927 0, #05060a 46%);
-  color: var(--text-main);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 10% 20%, rgba(0, 224, 255, 0.09), transparent 55%),
-    radial-gradient(circle at 90% 80%, rgba(255, 216, 0, 0.06), transparent 55%);
-  opacity: 0.9;
-  pointer-events: none;
-  z-index: -1;
-}
-
-main {
-  width: 100%;
-  max-width: var(--max-width);
-  padding: 20px 16px 80px;
-}
-
-@media (min-width: 768px) {
-  main {
-    padding: 30px 28px 60px;
-  }
-}
-
-/* -------------------------------------------------------------------
-   BADGE
--------------------------------------------------------------------*/
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(0, 224, 255, 0.08);
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  border: 1px solid rgba(0, 224, 255, 0.25);
-}
-
-.badge-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 10px rgba(0, 224, 255, 0.85);
-}
-
-/* -------------------------------------------------------------------
-   HERO
--------------------------------------------------------------------*/
-.hero {
-  display: grid;
-  gap: 22px;
-  margin-bottom: 34px;
-}
-
-@media (min-width: 900px) {
-  .hero {
-    grid-template-columns: 1.4fr 1fr;
-    align-items: center;
-    gap: 36px;
-  }
-}
-
-.hero-title {
-  font-size: clamp(26px, 4vw, 34px);
-  font-weight: 800;
-  line-height: 1.1;
-  margin: 12px 0 12px;
-}
-
-.hero-title .accent {
-  color: var(--accent);
-}
-
-.hero-subtitle {
-  font-size: 14px;
-  color: var(--text-muted);
-  max-width: 520px;
-}
-
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.pill {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(15, 17, 25, 0.85);
-}
-
-/* -------------------------------------------------------------------
-   CTAs
--------------------------------------------------------------------*/
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.btn-primary,
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 0;
-  text-decoration: none;
-  transition: var(--transition-fast);
-  white-space: nowrap;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), #57f5ff);
-  color: #020308;
-  box-shadow: 0 12px 35px rgba(0, 224, 255, 0.4);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(0, 224, 255, 0.55);
-}
-
-.btn-ghost {
-  background: rgba(20, 24, 32, 0.8);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-}
-
-.btn-ghost:hover {
-  background: rgba(26, 32, 45, 0.95);
-  transform: translateY(-2px);
-}
-
-/* -------------------------------------------------------------------
-   HERO CARD (MATCH BOX)
--------------------------------------------------------------------*/
-.hero-card {
-  background: radial-gradient(circle at top, #23283a, #10121a 60%);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
-  padding: 18px 18px 16px;
-  border: 1px solid rgba(120, 134, 180, 0.4);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-card::before {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(0, 224, 255, 0.13), transparent 60%),
-    radial-gradient(circle at 110% 20%, rgba(255, 216, 0, 0.10), transparent 55%);
-  opacity: 0.9;
-  z-index: -1;
-}
-
-.hero-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.hero-card-title {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  color: var(--text-muted);
-}
-
-.hero-card-tag {
-  font-size: 12px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(245, 245, 247, 0.18);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hero-card-teams {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.hero-card-team {
-  flex: 1;
-  background: rgba(6, 8, 16, 0.75);
-  border-radius: 999px;
-  padding: 10px 12px;
-  border: 1px solid rgba(163, 167, 181, 0.35);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.team-name {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.team-form {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.hero-card-vs {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--accent-yellow);
-  text-shadow: 0 0 14px rgba(255,216,0,0.85);
-  padding: 0 6px;
-}
-
-.hero-logos {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 12px 0 6px;
-}
-
-.hero-logos img {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(0,0,0,0.7));
-}
-
-/* -------------------------------------------------------------------
-   GRID / CARDS
--------------------------------------------------------------------*/
-.grid {
-  display: grid;
-  gap: 18px;
-  margin-top: 10px;
-}
-
-@media (min-width: 900px) {
-  .grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.card {
-  background: rgba(11, 14, 22, 0.95);
-  border-radius: var(--radius-lg);
-  padding: 16px 16px 14px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-title {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.card-pill {
-  padding: 4px 9px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  border-radius: 999px;
-  background: rgba(0,224,255,0.06);
-  color: var(--accent);
-  border: 1px solid rgba(0,224,255,0.4);
-}
-
-.card-body {
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.55;
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  color: var(--text-muted);
-}
-
-.stat-value {
-  font-weight: 600;
-}
-
-.chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.chip {
-  padding: 4px 9px;
-  font-size: 11px;
-  border-radius: 999px;
-  background: rgba(23,27,40,0.9);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-}
-
-.chip.highlight {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.players-list {
-  display: grid;
-  gap: 8px;
-}
-
-.player-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
-.player-name {
-  font-weight: 500;
-}
-
-.player-meta {
-  font-size: 12px;
-  color: var(--accent-yellow);
-}
-
-.score-box {
-  margin-top: 6px;
-  padding: 14px;
-  border-radius: 16px;
-  border: 1px dashed rgba(255,216,0,0.7);
-  background: radial-gradient(circle at top, rgba(255,216,0,0.16), transparent 65%);
-  text-align: center;
-}
-
-.score-box-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--text-muted);
-}
-
-.score-box-value {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--accent-yellow);
-}
-
-.score-box-caption {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-/* -------------------------------------------------------------------
-   LIVE SIDEBAR (desktop)
--------------------------------------------------------------------*/
-#live-sidebar {
-  position: fixed;
-  top: 80px;
-  right: 28px;
-  width: 280px;
-  padding: 18px 16px;
-  background: rgba(11,14,22,0.97);
-  border-radius: 16px;
-  border: 1px solid rgba(120,134,180,0.5);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.55);
-  display: none;
-  z-index: 999;
-}
-
-@media (min-width: 1024px) {
-  #live-sidebar {
-    display: block;
-  }
-}
-
-.sidebar-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 10px;
-}
-
-.sidebar-cta {
-  display: block;
-  margin-top: 14px;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, var(--accent), #57f5ff);
-  color: #020308;
-  font-weight: 700;
-  border-radius: 999px;
-  text-align: center;
-  text-decoration: none;
-  box-shadow: 0 8px 25px rgba(0,224,255,0.4);
-  transition: var(--transition-fast);
-}
-
-.sidebar-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(0,224,255,0.55);
-}
-
-/* -------------------------------------------------------------------
-   WIN PROBABILITY BAR
--------------------------------------------------------------------*/
-.wp-bar {
-  width: 100%;
-  height: 14px;
-  border-radius: 999px;
-  overflow: hidden;
-  display: flex;
-  border: 1px solid rgba(0,224,255,0.35);
-  background: rgba(15,18,26,0.9);
-}
-
-.wp-segment {
-  height: 100%;
-  transition: width 0.4s ease-out;
-}
-
-#wp-teamA {
-  background: linear-gradient(90deg, var(--accent), rgba(0,224,255,0.5));
-}
-
-#wp-teamB {
-  background: linear-gradient(90deg, rgba(255,216,0,0.5), var(--accent-yellow));
-}
-
-.wp-labels {
-  font-size: 12px;
-  display: flex;
-  justify-content: space-between;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-/* -------------------------------------------------------------------
-   STICKY CTA (mobile)
--------------------------------------------------------------------*/
-.sticky-cta {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--accent-yellow);
-  color: #05060a;
-  text-align: center;
-  padding: 12px 16px;
-  font-weight: 700;
-  font-size: 15px;
-  text-decoration: none;
-  z-index: 9999;
-  box-shadow: 0 -10px 25px rgba(0,0,0,0.75);
-}
-
-@media (min-width: 900px) {
-  .sticky-cta {
-    display: none;
-  }
-}
-
-/* -------------------------------------------------------------------
-   DISCLAIMER & FOOTER
--------------------------------------------------------------------*/
-.disclaimer {
-  margin-top: 30px;
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.55;
-  border-top: 1px solid rgba(41,46,65,0.8);
-  padding-top: 14px;
-}
-
-footer {
-  margin-top: 18px;
-  font-size: 11px;
-  color: var(--text-muted);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  border-top: 1px solid rgba(24,27,40,0.9);
-  padding-top: 12px;
-}
-
-.link-inline {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.link-inline:hover {
-  text-decoration: underline;
-}
-</style>
-
+  <style>
+    /* -------------------------------------------------------------------
+       ROOT DESIGN SYSTEM
+    -------------------------------------------------------------------*/
+    :root {
+      --bg-main: #05060a;
+      --bg-card: #10121a;
+      --bg-soft: #171a23;
+      --accent: #00e0ff;
+      --accent-soft: rgba(0, 224, 255, 0.12);
+      --accent-yellow: #ffd800;
+      --text-main: #f5f5f7;
+      --text-muted: #a3a7b5;
+      --border-subtle: #262a37;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+      --transition-fast: 0.18s ease-out;
+      --max-width: 1120px;
+    }
+
+    /* -------------------------------------------------------------------
+       GLOBAL
+    -------------------------------------------------------------------*/
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Montserrat", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #161927 0, #05060a 46%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(0, 224, 255, 0.09), transparent 55%),
+        radial-gradient(circle at 90% 80%, rgba(255, 216, 0, 0.06), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    main {
+      width: 100%;
+      max-width: var(--max-width);
+      padding: 20px 16px 80px;
+    }
+
+    @media (min-width: 768px) {
+      main {
+        padding: 30px 28px 60px;
+      }
+    }
+
+    /* -------------------------------------------------------------------
+       BADGE
+    -------------------------------------------------------------------*/
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 224, 255, 0.08);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0, 224, 255, 0.25);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 224, 255, 0.85);
+    }
+
+    /* -------------------------------------------------------------------
+       HERO
+    -------------------------------------------------------------------*/
+    .hero {
+      display: grid;
+      gap: 22px;
+      margin-bottom: 34px;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: 1.4fr 1fr;
+        align-items: center;
+        gap: 36px;
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 12px 0 12px;
+    }
+
+    .hero-title .accent {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 17, 25, 0.85);
+    }
+
+    /* -------------------------------------------------------------------
+       CTAs
+    -------------------------------------------------------------------*/
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 0;
+      text-decoration: none;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #57f5ff);
+      color: #020308;
+      box-shadow: 0 12px 35px rgba(0, 224, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(0, 224, 255, 0.55);
+    }
+
+    .btn-ghost {
+      background: rgba(20, 24, 32, 0.8);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(26, 32, 45, 0.95);
+      transform: translateY(-2px);
+    }
+
+    /* -------------------------------------------------------------------
+       HERO CARD (MATCH BOX)
+    -------------------------------------------------------------------*/
+    .hero-card {
+      background: radial-gradient(circle at top, #23283a, #10121a 60%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(120, 134, 180, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0, 224, 255, 0.13), transparent 60%),
+        radial-gradient(circle at 110% 20%, rgba(255, 216, 0, 0.10), transparent 55%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .hero-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      color: var(--text-muted);
+    }
+
+    .hero-card-tag {
+      font-size: 12px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(245, 245, 247, 0.18);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-card-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .hero-card-team {
+      flex: 1;
+      background: rgba(6, 8, 16, 0.75);
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid rgba(163, 167, 181, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .team-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .team-form {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-card-vs {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+      text-shadow: 0 0 14px rgba(255,216,0,0.85);
+      padding: 0 6px;
+    }
+
+    .hero-logos {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 12px 0 6px;
+    }
+
+    .hero-logos img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,0.7));
+    }
+  </style>
 </head>
+
 <body>
 
-  <script src="assets/js/team_logos.js"></script>
-
-
-  <main>
+<main>
 
   <!-- ============================= -->
   <!-- HERO SECTION -->
@@ -602,7 +324,7 @@ footer {
 
       <p class="hero-subtitle">
         Live win probability, projected scores, pitch behaviour, team form and key
-        players — updated automatically for IPL, ILT20, BBL, PSL and SA20.
+        players — updated automatically across all major T20 leagues.
       </p>
 
       <div class="hero-meta">
@@ -630,7 +352,7 @@ footer {
 
         <div class="hero-card-tag">
           <span style="width:8px;height:8px;background:#26ff8a;border-radius:999px;
-                       box-shadow:0 0 10px rgba(38,255,138,0.9);"></span>
+                        box-shadow:0 0 10px rgba(38,255,138,0.9);"></span>
           Live soon
         </div>
       </div>
@@ -649,7 +371,7 @@ footer {
         </div>
       </div>
 
-      <!-- Team Logos Auto-loaded by JS -->
+      <!-- AUTO-LOADED LOGOS -->
       <div class="hero-logos" id="hero-logos"></div>
 
       <div class="hero-card-footer">
@@ -677,7 +399,8 @@ footer {
     </a>
   </aside>
 
-      <!-- ============================= -->
+
+  <!-- ============================= -->
   <!-- INSIGHTS GRID -->
   <!-- ============================= -->
   <section id="analysis" class="grid grid-cols-2">
@@ -739,9 +462,7 @@ footer {
       </div>
 
       <div class="card-body">
-        <div class="players-list" id="players-list">
-          <!-- Filled dynamically -->
-        </div>
+        <div class="players-list" id="players-list"></div>
 
         <p style="margin-top:8px;">
           These players can swing momentum through early breakthroughs or stable innings.
@@ -771,13 +492,8 @@ footer {
           </div>
         </div>
 
-        <div id="win-prob" style="margin-top:14px;font-size:13px;">
-          <!-- AI win percentage inserted by JS -->
-        </div>
-
-        <div id="odds-block" style="margin-top:14px;font-size:13px;">
-          <!-- Informational implied odds -->
-        </div>
+        <div id="win-prob" style="margin-top:14px;font-size:13px;"></div>
+        <div id="odds-block" style="margin-top:14px;font-size:13px;"></div>
 
       </div>
     </article>
@@ -822,40 +538,111 @@ footer {
 <a id="sticky-cta" class="sticky-cta aff-link" href="#" target="_blank">
   Claim your welcome bonus →
 </a>
-
- <script>
+<!-- ============================= -->
+<!-- PART 3 — GLOBAL JS UTILITIES -->
+<!-- ============================= -->
+<script>
 /* -------------------------------------------------------
-   PART 4.1 — CORE UTILITIES (SAFE VERSION)
-   ------------------------------------------------------- */
-
+   GLOBAL CONSTANTS
+------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// Affiliate link constant (global)
-const AFF_LINK = "https://record.revmasters.com/_qAqHODIbs_277L7zifyVX2Nd7ZgqdRLk/1/";
+const AFF_LINK =
+  "https://record.revmasters.com/_qAqHODIbs_277L7zifyVX2Nd7ZgqdRLk/1/";
 
-/* Logo resolver */
-function getLogo(teamName) {
-  return `https://api.cricapi.com/v1/teams/${teamName}/logo.png`;
+/* -------------------------------------------------------
+   UNIVERSAL LOGO RESOLVER (HARDENED)
+------------------------------------------------------- */
+
+const FALLBACK_LOGO = "assets/img/logos/default.png";
+
+/*
+   The API DOES NOT provide clean logo endpoints,
+   so we use a controlled local mapping system + fallback:
+
+   1) Exact name → logo
+   2) Team word match → league logo
+   3) Fallback generic logo
+*/
+
+function getLogo(team) {
+  if (!team) return FALLBACK_LOGO;
+
+  const name = team.trim().toLowerCase();
+
+  const map = {
+    // IPL
+    "chennai super kings": "assets/img/logos/ipl/csk.png",
+    "mumbai indians": "assets/img/logos/ipl/mi.png",
+    "kolkata knight riders": "assets/img/logos/ipl/kkr.png",
+    "royal challengers bangalore": "assets/img/logos/ipl/rcb.png",
+    "sunrisers hyderabad": "assets/img/logos/ipl/srh.png",
+    "rajasthan royals": "assets/img/logos/ipl/rr.png",
+    "delhi capitals": "assets/img/logos/ipl/dc.png",
+    "punjab kings": "assets/img/logos/ipl/pbks.png",
+
+    // BBL
+    "sydney sixers": "assets/img/logos/bbl/sixers.png",
+    "sydney thunder": "assets/img/logos/bbl/thunder.png",
+    "brisbane heat": "assets/img/logos/bbl/heat.png",
+    "melbourne renegades": "assets/img/logos/bbl/renegades.png",
+    "melbourne stars": "assets/img/logos/bbl/stars.png",
+    "hobart hurricanes": "assets/img/logos/bbl/hurricanes.png",
+    "perth scorchers": "assets/img/logos/bbl/scorchers.png",
+    "adelaide strikers": "assets/img/logos/bbl/strikers.png",
+
+    // PSL
+    "karachi kings": "assets/img/logos/psl/karachi.png",
+    "lahore qalandars": "assets/img/logos/psl/lahore.png",
+    "quetta gladiators": "assets/img/logos/psl/quetta.png",
+    "peshawar zalmi": "assets/img/logos/psl/peshawar.png",
+    "islamabad united": "assets/img/logos/psl/islamabad.png",
+    "multan sultans": "assets/img/logos/psl/multan.png",
+
+    // ILT20
+    "mi emirates": "assets/img/logos/ilt20/miemirates.png",
+    "dubai capitals": "assets/img/logos/ilt20/dubaicapitals.png",
+    "desert vipers": "assets/img/logos/ilt20/desertvipers.png",
+    "gulf giants": "assets/img/logos/ilt20/gulfgiants.png",
+    "sharjah warriors": "assets/img/logos/ilt20/sharjah.png",
+    "abudhabi knight riders": "assets/img/logos/ilt20/akr.png",
+
+    // SA20
+    "sunrisers eastern cape": "assets/img/logos/sa20/sec.png",
+    "joburg super kings": "assets/img/logos/sa20/jsk.png",
+    "pretoria capitals": "assets/img/logos/sa20/pc.png",
+    "paarl royals": "assets/img/logos/sa20/pr.png",
+    "durban super giants": "assets/img/logos/sa20/dsg.png",
+    "mi cape town": "assets/img/logos/sa20/mict.png",
+  };
+
+  if (map[name]) return map[name];
+
+  // League-wide fallback detection
+  if (name.includes("mi")) return "assets/img/logos/ipl/mi.png";
+  if (name.includes("heat")) return "assets/img/logos/bbl/heat.png";
+  if (name.includes("giants")) return "assets/img/logos/sa20/dsg.png";
+
+  return FALLBACK_LOGO;
 }
+
 </script>
 
 
-  <script>
-/* -------------------------------------------------------
-   PART 4.2 — LOAD MATCH DATA & POPULATE UI
-   ------------------------------------------------------- */
 
+
+<!-- ============================= -->
+<!-- PART 3 — MATCH DATA LOADER -->
+<!-- ============================= -->
+<script>
 async function loadMatchData() {
   try {
     const res = await fetch("data/latest.json", { cache: "no-store" });
     const data = await res.json();
 
-    /* ===============================
-       1) HERO SECTION
-       =============================== */
-
+    /* HERO SECTION */
     document.getElementById("match-date-label").textContent =
-      `Today’s Match · ${data.date || ""}`;
+      `Today’s Match · ${data.date}`;
 
     document.getElementById("hero-teamA").textContent = data.teamA;
     document.getElementById("hero-teamB").textContent = data.teamB;
@@ -864,228 +651,158 @@ async function loadMatchData() {
     document.getElementById("hero-formB").textContent = `Form: ${data.formB}`;
 
     document.getElementById("hero-sub").textContent =
-      `${data.teamA} vs ${data.teamB} at ${data.venue || ""}`;
+      `${data.teamA} vs ${data.teamB} at ${data.venue}`;
 
     document.getElementById("hero-projected").textContent =
-      `Projected score: ${data.projected} (analysis only)`;
+      `Projected score: ${data.projected}`;
 
-    // Logos
+    // LOGOS ============================================
     document.getElementById("hero-logos").innerHTML = `
       <img src="${getLogo(data.teamA)}" alt="${data.teamA}">
       <img src="${getLogo(data.teamB)}" alt="${data.teamB}">
     `;
 
-    /* ===============================
-       2) TEAM FORM SECTION
-       =============================== */
-
-    document.getElementById("form-labelA").textContent =
-      `${data.teamA} — last 5`;
-    document.getElementById("form-labelB").textContent =
-      `${data.teamB} — last 5`;
+    /* FORM SECTION */
+    document.getElementById("form-labelA").textContent = `${data.teamA} — last 5`;
+    document.getElementById("form-labelB").textContent = `${data.teamB} — last 5`;
 
     document.getElementById("form-valuesA").textContent = data.formA;
     document.getElementById("form-valuesB").textContent = data.formB;
 
-    // Momentum logic
-    const pa = data.ml_probability?.teamA_prob || 50;
-    const pb = data.ml_probability?.teamB_prob || 50;
+    const pa = data.ml_probability.teamA_prob;
+    const pb = data.ml_probability.teamB_prob;
 
     let summary = "Very balanced contest.";
     let chip = "Momentum edge: Even";
 
     if (Math.abs(pa - pb) > 5) {
       const fav = pa > pb ? data.teamA : data.teamB;
-      summary = `Our AI model suggests a momentum edge for ${fav}, based on recent form and matchup profile.`;
       chip = `Momentum edge: ${fav}`;
+      summary = `${fav} show stronger momentum based on recent form.`;
     }
 
     document.getElementById("form-summary").textContent = summary;
     document.getElementById("momentum-chip").textContent = chip;
 
-    /* ===============================
-       3) PITCH REPORT
-       =============================== */
-
+    /* PITCH REPORT */
     document.getElementById("pitch-text").textContent = data.pitch;
     document.getElementById("pitch-chip-main").textContent =
       `Venue: ${data.venue}`;
     document.getElementById("pitch-chip-extra").textContent =
       "Surface & scoring profile";
 
-    /* ===============================
-       4) KEY PLAYERS
-       =============================== */
+    /* KEY PLAYERS */
+    const plBox = document.getElementById("players-list");
+    plBox.innerHTML = "";
 
-    const players = data.players || [];
-    const pl = document.getElementById("players-list");
+    (data.players || []).slice(0, 4).forEach(p => {
+      plBox.innerHTML += `
+        <div class="player-item">
+          <span class="player-name">${p.name}</span>
+          <span class="player-meta">${p.role}</span>
+        </div>`;
+    });
 
-    pl.innerHTML = "";
-
-    if (players.length === 0) {
-      pl.innerHTML = "<p>No player data available.</p>";
-    } else {
-      players.slice(0, 4).forEach(p => {
-        pl.innerHTML += `
-          <div class="player-item">
-            <span class="player-name">${p.name}</span>
-            <span class="player-meta">${p.role || "Key player"}</span>
-          </div>
-        `;
-      });
-    }
-
-    /* ===============================
-       5) PROJECTED SCORE + AI WIN PROBABILITY
-       =============================== */
-
-    document.getElementById("proj-range").textContent =
-      data.projected || "—";
+    /* SCORE + PROBABILITY */
+    document.getElementById("proj-range").textContent = data.projected;
 
     document.getElementById("win-prob").innerHTML = `
       <strong>AI Win Probability:</strong><br>
       ${data.teamA}: ${pa}%<br>
-      ${data.teamB}: ${pb}%
-    `;
+      ${data.teamB}: ${pb}%`;
 
-    /* Implied odds (informational only) */
     const oddsA = (100 / pa).toFixed(2);
     const oddsB = (100 / pb).toFixed(2);
 
-    /* Score band estimation */
-    let low = 150, high = 190;
     const matchRange = (data.projected || "").match(/(\d+)\D+(\d+)/);
-    if (matchRange) {
-      low = parseInt(matchRange[1], 10);
-      high = parseInt(matchRange[2], 10);
-    }
+    let low = matchRange ? matchRange[1] : 150;
+    let high = matchRange ? matchRange[2] : 190;
 
     document.getElementById("odds-block").innerHTML = `
-      <strong>Implied odds (informational):</strong><br>
+      <strong>Implied odds:</strong><br>
       ${data.teamA}: ${oddsA}<br>
       ${data.teamB}: ${oddsB}<br><br>
       <strong>Score probability:</strong><br>
       Under ${low}: ~25%<br>
       ${low}–${high}: ~45%<br>
       Over ${high}: ~30%<br>
-      <span style="font-size:11px;opacity:0.7;">* Entertainment-only AI output.</span>
+      <small>* Entertainment-only AI output.</small>
     `;
 
-    /* ===============================
-       6) Affiliate links
-       =============================== */
-
+    /* AFFILIATE LINKS */
     document.querySelectorAll(".aff-link").forEach(a => {
       a.href = AFF_LINK;
-      a.target = "_blank";
     });
-
     document.getElementById("sticky-cta").href = AFF_LINK;
   }
 
-  catch (err) {
-    console.error("Error loading latest.json:", err);
-
-    document.getElementById("hero-sub").textContent =
-      "Could not load match data.";
-    document.getElementById("form-summary").textContent =
-      "Data unavailable at the moment.";
+  catch (e) {
+    console.error("Error loading match data:", e);
   }
 }
 
 loadMatchData();
 </script>
 
-  <script>
-/* -------------------------------------------------------
-   PART 4.3 — LIVE SIDEBAR WIDGET
-   ------------------------------------------------------- */
 
-/* Renders sidebar with live score + AI win probability */
-function renderLiveSidebar(data) {
-  const box = document.getElementById("sidebar-content");
 
-  const teamA = data.teamA || "Team A";
-  const teamB = data.teamB || "Team B";
 
-  const scoreA = data.live?.t1s || "-";
-  const scoreB = data.live?.t2s || "-";
+<!-- ============================= -->
+<!-- PART 3 — LIVE SIDEBAR ENGINE -->
+<!-- ============================= -->
+<script>
+async function loadLiveSidebar() {
+  try {
+    const res = await fetch("data/latest.json", { cache: "no-store" });
+    const data = await res.json();
 
-  const pa = data.ml_probability?.teamA_prob || 50;
-  const pb = data.ml_probability?.teamB_prob || 50;
+    const teamA = data.teamA;
+    const teamB = data.teamB;
 
-  const total = pa + pb || 1;
-  const pA = Math.round((pa / total) * 100);
-  const pB = 100 - pA;
+    const scoreA = data.live?.score1 || "-";
+    const scoreB = data.live?.score2 || "-";
 
-  /* Render HTML */
-  box.innerHTML = `
+    const pa = data.ml_probability.teamA_prob;
+    const pb = data.ml_probability.teamB_prob;
+
+    const total = pa + pb;
+    const pA = Math.round((pa / total) * 100);
+    const pB = 100 - pA;
+
+    document.getElementById("sidebar-content").innerHTML = `
       <div style="font-size:14px;font-weight:600;margin-bottom:6px;">
         ${teamA} vs ${teamB}
       </div>
 
-      <div style="font-size:13px;margin-bottom:4px;">
-        <strong>${teamA}</strong>: ${scoreA}
+      <div><strong>${teamA}</strong>: ${scoreA}</div>
+      <div><strong>${teamB}</strong>: ${scoreB}</div>
+
+      <h4 style="margin-top:12px;color:var(--accent);font-size:13px;">Win Probability</h4>
+
+      <div class="wp-bar">
+        <div class="wp-segment" style="width:${pA}%;background:var(--accent);"></div>
+        <div class="wp-segment" style="width:${pB}%;background:var(--accent-yellow);"></div>
       </div>
 
-      <div style="font-size:13px;margin-bottom:8px;">
-        <strong>${teamB}</strong>: ${scoreB}
-      </div>
-
-      <!-- WIN PROBABILITY BAR -->
-      <div style="margin-top:14px;">
-        <h4 style="font-size:13px;margin-bottom:6px;color:var(--accent);">
-          Win Probability
-        </h4>
-
-        <div class="wp-bar">
-          <div class="wp-segment" id="wpA" style="width:${pA}%;"></div>
-          <div class="wp-segment" id="wpB" style="width:${pB}%;"></div>
-        </div>
-
-        <div class="wp-labels">
-          <span>${teamA}: ${pA}%</span>
-          <span>${teamB}: ${pB}%</span>
-        </div>
+      <div class="wp-labels">
+        <span>${teamA}: ${pA}%</span>
+        <span>${teamB}: ${pB}%</span>
       </div>
 
       <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
         * Auto-refresh every 60 seconds
       </div>
-  `;
+    `;
 
-  /* Color gradient assignment */
-  document.getElementById("wpA").style.background =
-    "linear-gradient(90deg, var(--accent), rgba(0,224,255,0.5))";
-
-  document.getElementById("wpB").style.background =
-    "linear-gradient(90deg, rgba(255,216,0,0.5), var(--accent-yellow))";
-
-  /* CTA link */
-  document.getElementById("sidebar-cta").href = AFF_LINK;
-}
-
-/* -------------------------------------------------------
-   FETCH LIVE SCORE (based on latest.json)
-   ------------------------------------------------------- */
-
-async function loadLiveScore() {
-  try {
-    const res = await fetch("data/latest.json", { cache: "no-store" });
-    const data = await res.json();
-    renderLiveSidebar(data);
-  } catch (err) {
+    document.getElementById("sidebar-cta").href = AFF_LINK;
+  }
+  catch (e) {
     document.getElementById("sidebar-content").innerHTML =
-      "<p style='opacity:0.6;'>No live score available</p>";
+      "<p style='opacity:0.6;'>No live score available.</p>";
   }
 }
 
-/* Initial load */
-loadLiveScore();
-
-/* Auto-refresh every 60 seconds */
-setInterval(loadLiveScore, 60000);
+loadLiveSidebar();
+setInterval(loadLiveSidebar, 60000);
 </script>
 
-</body>
-</html>
