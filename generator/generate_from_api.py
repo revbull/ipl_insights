@@ -11,7 +11,6 @@ from match_card import generate_card
 
 API_KEY = "c654ad58-ef3e-4152-a811-115310d6d9ee"
 BASE_URL = "https://api.cricapi.com/v1"
-
 TODAY = datetime.utcnow().strftime("%Y-%m-%d")
 
 
@@ -21,10 +20,10 @@ TODAY = datetime.utcnow().strftime("%Y-%m-%d")
 
 def parse_form(form_str: str) -> float:
     form_str = form_str.replace(",", " ").upper()
-    tokens = [t for t in form_str.split() if t in ("W","L","D")]
+    tokens = [t for t in form_str.split() if t in ("W", "L", "D")]
     if not tokens:
         return 0
-    score = sum(1 if t=="W" else -1 if t=="L" else 0 for t in tokens)
+    score = sum(1 if t == "W" else -1 if t == "L" else 0 for t in tokens)
     return score / len(tokens)
 
 
@@ -32,9 +31,12 @@ def form_to_icons(form_string: str) -> str:
     tokens = form_string.replace(",", " ").upper().split()
     out = []
     for t in tokens:
-        if t == "W": out.append("🟩")
-        elif t == "L": out.append("🟥")
-        else: out.append("🟨")
+        if t == "W":
+            out.append("🟩")
+        elif t == "L":
+            out.append("🟥")
+        else:
+            out.append("🟨")
     return " ".join(out)
 
 
@@ -54,9 +56,9 @@ def auto_pitch_report(venue):
 def estimate_projected_score(venue, form_a, form_b):
     v = venue.lower()
 
-    if any(k in v for k in ["wankhede","chinnaswamy"]):
+    if any(k in v for k in ["wankhede", "chinnaswamy"]):
         base = 185
-    elif any(k in v for k in ["chepauk","arun","delhi"]):
+    elif any(k in v for k in ["chepauk", "arun", "delhi"]):
         base = 160
     else:
         base = 170
@@ -71,19 +73,17 @@ def estimate_projected_score(venue, form_a, form_b):
 
 
 # =============================
-# FETCH REAL MATCH (Always First Match Logic)
+# FETCH FIRST MATCH
 # =============================
 
 def fetch_first_match():
     try:
-        # Check for live matches
         url = f"{BASE_URL}/currentMatches?apikey={API_KEY}"
         res = requests.get(url).json()
 
         if res.get("status") == "success" and res.get("data"):
             return res["data"][0]
 
-        # If no live matches → upcoming fixtures
         url = f"{BASE_URL}/matchCalendar?apikey={API_KEY}"
         res = requests.get(url).json()
 
@@ -91,7 +91,6 @@ def fetch_first_match():
             return res["data"][0]
 
         return None
-
     except Exception as e:
         print("API error:", e)
         return None
@@ -114,7 +113,6 @@ def fetch_player_stats(player_name):
             return None
 
         p = data[0]
-
         return {
             "name": p.get("name", player_name),
             "role": p.get("role", "Player"),
@@ -134,11 +132,9 @@ def build_player_insights(team_a, team_b):
     ]
 
     final_players = []
-
     for p in fallback:
         stats = fetch_player_stats(p["name"])
         final_players.append(stats or p)
-
     return final_players
 
 
@@ -165,14 +161,13 @@ def fetch_live_score(team_a, team_b):
                     "score2": m.get("t2s", "N/A"),
                     "status": m.get("status", "Match in progress")
                 }
-
         return None
     except:
         return None
 
 
 # =============================
-# ADVANCED ML WIN PROBABILITY
+# ML WIN PROBABILITY
 # =============================
 
 def ml_win_probability(team_a, team_b, form_a, form_b, venue, h2h):
@@ -184,9 +179,9 @@ def ml_win_probability(team_a, team_b, form_a, form_b, venue, h2h):
     h2h_diff = (h2h.get("wins_a", 0) - h2h.get("wins_b", 0)) / total
 
     v = venue.lower()
-    if any(k in v for k in ["wankhede","chinnaswamy"]):
+    if any(k in v for k in ["wankhede", "chinnaswamy"]):
         venue_factor = 0.12
-    elif any(k in v for k in ["chepauk","arun"]):
+    elif any(k in v for k in ["chepauk", "arun"]):
         venue_factor = -0.05
     else:
         venue_factor = 0.02
@@ -205,7 +200,7 @@ def ml_win_probability(team_a, team_b, form_a, form_b, venue, h2h):
 
 
 # =============================
-# AI-STYLE MATCH SUMMARY
+# AI SUMMARY
 # =============================
 
 def generate_ai_prediction(team_a, team_b, venue, form_a, form_b, projected, ml_prob, pitch):
@@ -224,12 +219,12 @@ def generate_ai_prediction(team_a, team_b, venue, form_a, form_b, projected, ml_
         f"Based on venue conditions, a projected scoring range of {projected}, "
         f"recent form (with {team_a} appearing {momentum}), and the pitch profile "
         f"('{pitch}'), this matchup appears to present {verdict}. Early momentum "
-        f"and top-order execution will likely determine the winner."
+        and top-order execution will likely determine the winner."
     )
 
 
 # =============================
-# BUILD MATCH DATA
+# FETCH MATCH
 # =============================
 
 match = fetch_first_match()
@@ -244,11 +239,24 @@ if match:
 
     VENUE = match.get("venue", "Cricket Ground")
     MATCH_DATE = TODAY
+
+    # Team logos from CricketData
+    team_info = match.get("teamInfo", [])
+    TEAM_A_LOGO = team_info[0].get("img", "") if len(team_info) > 0 else ""
+    TEAM_B_LOGO = team_info[1].get("img", "") if len(team_info) > 1 else ""
+
 else:
     TEAM_A = "Team A"
     TEAM_B = "Team B"
+    TEAM_A_LOGO = ""
+    TEAM_B_LOGO = ""
     VENUE = "Unknown Stadium"
     MATCH_DATE = TODAY
+
+
+# =============================
+# STATIC FORM (You can replace with real form)
+# =============================
 
 TEAM_A_FORM = "W L W W L"
 TEAM_B_FORM = "L W L L W"
@@ -259,8 +267,6 @@ FORM_B_ICON = form_to_icons(TEAM_B_FORM)
 PLAYER_INSIGHTS = build_player_insights(TEAM_A, TEAM_B)
 LIVE = fetch_live_score(TEAM_A, TEAM_B)
 
-
-# Fallback H2H
 H2H = {
     "total": 10,
     "wins_a": 5,
@@ -269,13 +275,14 @@ H2H = {
 
 PROJECTED_SCORE = estimate_projected_score(VENUE, TEAM_A_FORM, TEAM_B_FORM)
 PITCH = auto_pitch_report(VENUE)
-
 ML_PROB = ml_win_probability(TEAM_A, TEAM_B, TEAM_A_FORM, TEAM_B_FORM, VENUE, H2H)
+
 AI_SUMMARY = generate_ai_prediction(
     TEAM_A, TEAM_B, VENUE,
     TEAM_A_FORM, TEAM_B_FORM,
     PROJECTED_SCORE, ML_PROB, PITCH
 )
+
 
 # =============================
 # JSON EXPORT
@@ -285,6 +292,8 @@ json_data = {
     "date": MATCH_DATE,
     "teamA": TEAM_A,
     "teamB": TEAM_B,
+    "teamA_logo": TEAM_A_LOGO,
+    "teamB_logo": TEAM_B_LOGO,
     "venue": VENUE,
     "formA": TEAM_A_FORM,
     "formB": TEAM_B_FORM,
@@ -303,12 +312,11 @@ os.makedirs("../data", exist_ok=True)
 with open(f"../data/{MATCH_DATE}.json", "w") as f:
     json.dump(json_data, f, indent=4)
 
-# Write latest.json (always points to the newest match)
+# latest.json pointer
 with open("../data/latest.json", "w") as f:
     json.dump(json_data, f, indent=4)
 
 print("✔ latest.json updated")
-
 
 
 # =============================
@@ -321,7 +329,7 @@ generate_card(json_data, card_path)
 
 
 # =============================
-# HTML EXPORT
+# MATCH HTML EXPORT
 # =============================
 
 os.makedirs("../matches", exist_ok=True)
@@ -340,6 +348,9 @@ html = f"""
 <h1>{TEAM_A} vs {TEAM_B}</h1>
 <p><strong>Date:</strong> {MATCH_DATE}</p>
 <p><strong>Venue:</strong> {VENUE}</p>
+
+<img src="{TEAM_A_LOGO}" style="height:60px;margin-right:20px;">
+<img src="{TEAM_B_LOGO}" style="height:60px;">
 
 <div class="card">
 <h2>Form Guide</h2>
@@ -401,7 +412,7 @@ with open(f"../matches/{MATCH_DATE}.html", "w", encoding="utf-8") as f:
 
 
 # =============================
-# TELEGRAM MESSAGE
+# TELEGRAM MESSAGE EXPORT
 # =============================
 
 telegram_msg = f"""
