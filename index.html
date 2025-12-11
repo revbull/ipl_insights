@@ -825,75 +825,15 @@ footer {
    PART 4.1 — TEAM LOGO SYSTEM + CORE UTILITIES
    ------------------------------------------------------- */
 
-/* 1) TEAM LOGO MAP — IPL + ILT20 + BBL + PSL + SA20 */
-const LOGOS = {
-  // IPL
-  "MI": "assets/img/logos/mi.png",
-  "Mumbai Indians": "assets/img/logos/mi.png",
+// Team logos from API (CricketData)
+const logoA = data.teamA_logo || "assets/img/logos/default.png";
+const logoB = data.teamB_logo || "assets/img/logos/default.png";
 
-  "RCB": "assets/img/logos/rcb.png",
-  "Royal Challengers Bangalore": "assets/img/logos/rcb.png",
+document.getElementById("hero-logos").innerHTML = `
+  <img src="${logoA}" alt="${data.teamA}">
+  <img src="${logoB}" alt="${data.teamB}">
+`;
 
-  "CSK": "assets/img/logos/csk.png",
-  "Chennai Super Kings": "assets/img/logos/csk.png",
-
-  "KKR": "assets/img/logos/kkr.png",
-  "Kolkata Knight Riders": "assets/img/logos/kkr.png",
-
-  "SRH": "assets/img/logos/srh.png",
-  "Sunrisers Hyderabad": "assets/img/logos/srh.png",
-
-  "DC": "assets/img/logos/dc.png",
-  "Delhi Capitals": "assets/img/logos/dc.png",
-
-  "GT": "assets/img/logos/gt.png",
-  "Gujarat Titans": "assets/img/logos/gt.png",
-
-  "LSG": "assets/img/logos/lsg.png",
-  "Lucknow Super Giants": "assets/img/logos/lsg.png",
-
-  // ILT20
-  "MI Emirates": "assets/img/logos/mi_emirates.png",
-  "Desert Vipers": "assets/img/logos/desert_vipers.png",
-  "Gulf Giants": "assets/img/logos/gulf_giants.png",
-  "Sharjah Warriors": "assets/img/logos/sharjah_warriors.png",
-  "Dubai Capitals": "assets/img/logos/dubai_capitals.png",
-  "Abu Dhabi Knight Riders": "assets/img/logos/adkr.png",
-
-  // BBL
-  "Sydney Sixers": "assets/img/logos/sixers.png",
-  "Sydney Thunder": "assets/img/logos/thunder.png",
-  "Perth Scorchers": "assets/img/logos/scorchers.png",
-  "Melbourne Stars": "assets/img/logos/stars.png",
-  "Melbourne Renegades": "assets/img/logos/renegades.png",
-  "Adelaide Strikers": "assets/img/logos/strikers.png",
-  "Hobart Hurricanes": "assets/img/logos/hurricanes.png",
-  "Brisbane Heat": "assets/img/logos/heat.png",
-
-  // PSL
-  "Lahore Qalandars": "assets/img/logos/lahore.png",
-  "Karachi Kings": "assets/img/logos/karachi.png",
-  "Islamabad United": "assets/img/logos/islamabad.png",
-  "Quetta Gladiators": "assets/img/logos/quetta.png",
-  "Multan Sultans": "assets/img/logos/multan.png",
-  "Peshawar Zalmi": "assets/img/logos/peshawar.png",
-
-  // SA20
-  "Sunrisers Eastern Cape": "assets/img/logos/sunrisers_ec.png",
-  "Paarl Royals": "assets/img/logos/paarl_royals.png",
-  "Joburg Super Kings": "assets/img/logos/joburg_super_kings.png",
-  "Pretoria Capitals": "assets/img/logos/pretoria_capitals.png",
-  "MI Cape Town": "assets/img/logos/mi_cape_town.png",
-  "Durban's Super Giants": "assets/img/logos/durbans_super_giants.png",
-
-  // Fallback
-  "default": "assets/img/logos/default.png"
-};
-
-/* Small helper */
-function getLogo(teamName) {
-  return LOGOS[teamName] || LOGOS["default"];
-}
 
 /* -------------------------------------------------------
    2) DYNAMIC YEAR IN FOOTER
