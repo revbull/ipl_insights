@@ -820,32 +820,22 @@ footer {
   Claim your welcome bonus →
 </a>
 
-  <script>
+ <script>
 /* -------------------------------------------------------
-   PART 4.1 — TEAM LOGO SYSTEM + CORE UTILITIES
+   PART 4.1 — CORE UTILITIES (SAFE VERSION)
    ------------------------------------------------------- */
 
-// Team logos from API (CricketData)
-const logoA = data.teamA_logo || "assets/img/logos/default.png";
-const logoB = data.teamB_logo || "assets/img/logos/default.png";
-
-document.getElementById("hero-logos").innerHTML = `
-  <img src="${logoA}" alt="${data.teamA}">
-  <img src="${logoB}" alt="${data.teamB}">
-`;
-
-
-/* -------------------------------------------------------
-   2) DYNAMIC YEAR IN FOOTER
-   ------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();
 
-/* -------------------------------------------------------
-   3) STORAGE FOR AFFILIATE LINK
-   ------------------------------------------------------- */
+// Affiliate link constant (global)
 const AFF_LINK = "https://record.revmasters.com/_qAqHODIbs_277L7zifyVX2Nd7ZgqdRLk/1/";
 
+/* Logo resolver */
+function getLogo(teamName) {
+  return `https://api.cricapi.com/v1/teams/${teamName}/logo.png`;
+}
 </script>
+
 
   <script>
 /* -------------------------------------------------------
