@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sports Insights | Picks, Guides & Reviews (21+)</title>
+  <meta name="description" content="Спортни анализи, ресурси и ревюта. 21+ | Отговорна игра." />
+  <meta name="robots" content="index,follow" />
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: #101a2f;
+      --muted: rgba(255,255,255,.72);
+      --text: rgba(255,255,255,.92);
+      --line: rgba(255,255,255,.10);
+      --accent: #7dd3fc;
+      --accent2:#a78bfa;
+      --good:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 22px;
+      --max: 1120px;
+      --pad: 18px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font);
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(125,211,252,.18), transparent 60%),
+        radial-gradient(700px 450px at 90% 0%, rgba(167,139,250,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg), #070b14 70%);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 var(--pad);}
+    .pill{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:10px 12px; border:1px solid var(--line);
+      background:rgba(255,255,255,.04); border-radius:999px;
+      color:var(--muted); font-size:13px;
+    }
+    .badge{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px; border-radius:14px; border:1px solid var(--line);
+      background:rgba(255,255,255,.06); color:var(--text);
+      text-decoration:none; font-weight:650; letter-spacing:.1px;
+      transition:transform .08s ease, background .12s ease, border-color .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.18);}
+    .btn.primary{
+      border-color:rgba(125,211,252,.35);
+      background:linear-gradient(135deg, rgba(125,211,252,.22), rgba(167,139,250,.18));
+    }
+    .btn.small{padding:10px 12px; border-radius:12px; font-size:14px;}
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background:rgba(8,12,22,.55);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; text-decoration:none;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:14px;
+      background:linear-gradient(135deg, rgba(125,211,252,.9), rgba(167,139,250,.9));
+      box-shadow:0 10px 25px rgba(125,211,252,.18);
+    }
+    .brand strong{font-size:15px; letter-spacing:.2px}
+    .brand span{display:block; font-size:12px; color:var(--muted); margin-top:1px}
+    nav{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    nav a{
+      text-decoration:none; color:var(--muted); font-weight:600; font-size:14px;
+      padding:9px 10px; border-radius:12px;
+      border:1px solid transparent;
+    }
+    nav a:hover{color:var(--text); border-color:var(--line); background:rgba(255,255,255,.04);}
+
+    .hero{padding:42px 0 16px;}
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+    }
+    .hero-main{padding:26px;}
+    h1{margin:10px 0 10px; font-size:38px; line-height:1.08; letter-spacing:-.6px}
+    .sub{color:var(--muted); font-size:16px; line-height:1.55; margin:0 0 16px;}
+    .cta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .hero-side{padding:18px;}
+    .aside-title{font-size:14px; color:var(--muted); margin:0 0 10px; font-weight:700; letter-spacing:.2px}
+    .disclosure{
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.18);
+      padding:14px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .disclosure strong{color:var(--text)}
+    .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px;}
+    .kpi{
+      padding:12px; border-radius:16px; border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .kpi b{display:block; font-size:16px; margin-bottom:4px;}
+    .kpi span{color:var(--muted); font-size:12px;}
+
+    section{padding:18px 0;}
+    .section-head{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin-bottom:12px;
+    }
+    .section-head h2{margin:0; font-size:20px; letter-spacing:-.2px}
+    .section-head p{margin:0; color:var(--muted); font-size:14px;}
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+    .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+    .mini{
+      padding:16px; border-radius:var(--radius);
+      background:rgba(255,255,255,.03); border:1px solid var(--line);
+      text-decoration:none;
+    }
+    .mini h3{margin:0 0 6px; font-size:15px}
+    .mini p{margin:0; color:var(--muted); font-size:13px; line-height:1.45}
+    .mini .tagrow{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap}
+
+    .ranklist{display:flex; flex-direction:column; gap:12px;}
+    .site{
+      display:grid; grid-template-columns: 64px 1fr auto;
+      gap:14px; align-items:center;
+      padding:16px; border-radius:var(--radius2);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .site .icon{
+      width:64px; height:64px; border-radius:18px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,.75); font-weight:800;
+    }
+    .site h3{margin:0; font-size:16px}
+    .site .meta{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+    .site .bullets{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:13px;}
+    .site .bullets li{margin:4px 0;}
+    .site .actions{display:flex; flex-direction:column; gap:8px; align-items:stretch;}
+    .site .rank{
+      display:inline-flex; align-items:center; gap:8px;
+      margin-bottom:6px; color:var(--muted); font-size:12px;
+    }
+    .dot{width:10px; height:10px; border-radius:999px; background:rgba(255,255,255,.22);}
+    .dot.good{background:rgba(52,211,153,.8);}
+    .dot.warn{background:rgba(251,191,36,.9);}
+
+    .how{
+      padding:18px; border-radius:var(--radius2); border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .how ol{margin:10px 0 0; padding-left:18px; color:var(--muted); line-height:1.6}
+    .how li{margin:8px 0;}
+
+    .rg{
+      padding:18px; border-radius:var(--radius2);
+      border:1px solid rgba(251,191,36,.25);
+      background:linear-gradient(180deg, rgba(251,191,36,.10), rgba(255,255,255,.02));
+    }
+    .rg p{margin:8px 0 0; color:var(--muted); line-height:1.6}
+    footer{
+      border-top:1px solid var(--line);
+      padding:22px 0 40px;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.55;
+    }
+
+    .agebar{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color:var(--muted); font-size:12px;
+    }
+    .agebar input{accent-color: var(--accent);}
+    .divider{height:1px; background:var(--line); margin:14px 0;}
+
+    @media (max-width: 960px){
+      .hero-grid{grid-template-columns:1fr;}
+      .grid-3{grid-template-columns:1fr;}
+      .grid-2{grid-template-columns:1fr;}
+      h1{font-size:32px;}
+      .site{grid-template-columns: 56px 1fr; }
+      .site .actions{grid-column: 1 / -1; flex-direction:row; flex-wrap:wrap;}
+      nav{display:none;}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="#top" aria-label="Начало">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Sports Insights</strong>
+          <span>Data-first анализи • 21+</span>
+        </div>
+      </a>
+
+      <nav aria-label="Основна навигация">
+        <a href="#picks">Пикове</a>
+        <a href="#sites">Платформи</a>
+        <a href="#guides">Ръководства</a>
+        <a href="#how">Как избираме</a>
+        <a href="#rg">Отговорна игра</a>
+      </nav>
+
+      <a class="btn small primary" href="#sites">Виж препоръките</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <div class="wrap hero">
+    <div class="hero-grid">
+      <div class="card hero-main">
+        <div class="pill">🔞 21+ • Информационно съдържание • Без гаранции за резултат</div>
+        <h1>Trusted insights. Data-driven подход.</h1>
+        <p class="sub">
+          Тук ще намериш спортни анализи, кратки ресурси и ревюта на платформи. Целта е да вземаш по-информирани решения,
+          без агресивни обещания и без подвеждащи твърдения.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="#picks">Днешни анализи</a>
+          <a class="btn" href="#guides">Как да четеш коефициенти</a>
+          <a class="btn" href="#sites">Платформи (21+)</a>
+        </div>
+
+        <div class="agebar">
+          <label><input type="checkbox" required /> Потвърждавам, че съм 21+ (или минималната възраст за моята юрисдикция)</label>
+          <span class="badge">Play responsibly</span>
+          <span class="badge">Gambling involves risk</span>
+        </div>
+      </div>
+
+      <aside class="card hero-side">
+        <p class="aside-title">Affiliate disclosure</p>
+        <div class="disclosure">
+          <strong>Прозрачност:</strong> На тази страница има афилиейт линкове. Ако се регистрираш/депозираш през тях,
+          може да получим комисиона без допълнителен разход за теб. Това подпомага създаването на съдържание.
+        </div>
+
+        <div class="kpis" aria-label="Ключови индикатори">
+          <div class="kpi">
+            <b>Daily</b>
+            <span>кратки бележки & контекст</span>
+          </div>
+          <div class="kpi">
+            <b>Reviews</b>
+            <span>плюсове/минуси, без hype</span>
+          </div>
+          <div class="kpi">
+            <b>Guides</b>
+            <span>bankroll & дисциплина</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- POPULAR PAGES -->
+  <section class="wrap" id="picks">
+    <div class="section-head">
+      <div>
+        <h2>Популярни страници</h2>
+        <p>Бързи входове към най-търсените ресурси.</p>
+      </div>
+      <a class="btn small" href="#sites">Всички препоръки</a>
+    </div>
+
+    <div class="grid-3">
+      <a class="mini" href="YOUR_LINK_HERE/top-sportsbooks">
+        <h3>Топ платформи (21+)</h3>
+        <p>Сравнение на ключови фактори: пазари, плащания, UX, ограничения по региони.</p>
+        <div class="tagrow"><span class="badge">Comparison</span><span class="badge">Updated</span></div>
+      </a>
+      <a class="mini" href="YOUR_LINK_HERE/daily-notes">
+        <h3>Дневни бележки</h3>
+        <p>Кратък контекст за избрани събития – статистика, мотивация, форма, новини.</p>
+        <div class="tagrow"><span class="badge">Data</span><span class="badge">Context</span></div>
+      </a>
+      <a class="mini" href="YOUR_LINK_HERE/betting-basics">
+        <h3>Основи на залагането</h3>
+        <p>Коефициенти, стойност, варианс и типични грешки, които струват скъпо.</p>
+        <div class="tagrow"><span class="badge">Beginner</span><span class="badge">Discipline</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- TOP SITES -->
+  <section class="wrap" id="sites">
+    <div class="section-head">
+      <div>
+        <h2>Препоръчани платформи (21+)</h2>
+        <p>Информационен списък – наличността зависи от юрисдикцията ти.</p>
+      </div>
+    </div>
+
+    <div class="ranklist">
+      <!-- Site #1 -->
+      <div class="site">
+        <div class="icon" aria-hidden="true">#1</div>
+        <div>
+          <div class="rank"><span class="dot good"></span>Избор за “широки пазари”</div>
+          <h3>Example Sportsbook A</h3>
+          <div class="meta">Подходяща за потребители, които търсят разнообразие от спортове и базови функционалности.</div>
+          <ul class="bullets">
+            <li>Разнообразни пазари и линии</li>
+            <li>Ясни условия и поддръжка</li>
+            <li>Подходяща за умерен обем</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="YOUR_LINK_HERE/site-a" rel="nofollow sponsored">Виж платформата</a>
+          <a class="btn" href="YOUR_LINK_HERE/site-a-review">Прочети ревю</a>
+        </div>
+      </div>
+
+      <!-- Site #2 -->
+      <div class="site">
+        <div class="icon" aria-hidden="true">#2</div>
+        <div>
+          <div class="rank"><span class="dot warn"></span>Избор за “добър UX”</div>
+          <h3>Example Sportsbook B</h3>
+          <div class="meta">Фокус върху мобилно изживяване и по-лесна навигация при live пазари.</div>
+          <ul class="bullets">
+            <li>По-удобен интерфейс на мобилно</li>
+            <li>Полезни филтри за пазари</li>
+            <li>Подходяща за по-често “in-play” следене</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="YOUR_LINK_HERE/site-b" rel="nofollow sponsored">Виж платформата</a>
+          <a class="btn" href="YOUR_LINK_HERE/site-b-review">Прочети ревю</a>
+        </div>
+      </div>
+
+      <!-- Site #3 (BetUS placeholder) -->
+      <div class="site">
+        <div class="icon" aria-hidden="true">#3</div>
+        <div>
+          <div class="rank"><span class="dot warn"></span>Препоръка с контекст (21+)</div>
+          <h3>BetUS</h3>
+          <div class="meta">
+            Подходяща за потребители, които вече имат базови познания и искат “класически” sportsbook опит.
+            Винаги проверявай дали услугата е достъпна в твоя регион.
+          </div>
+          <ul class="bullets">
+            <li>Класическа sportsbook структура</li>
+            <li>Достъп до спортни пазари и допълнителни продукти</li>
+            <li>Важно: условия, ограничения и отговорна игра</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="YOUR_AFFILIATE_LINK_TO_BETUS" rel="nofollow sponsored">Повече информация</a>
+          <a class="btn" href="YOUR_LINK_HERE/betus-review">Прочети ревю</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p style="color:var(--muted); margin:0; font-size:13px; line-height:1.6">
+      Бележка: Не публикуваме “гарантирани” прогнози. Ако играеш, прави го в рамките на бюджет и с ясно разбиране за риска.
+    </p>
+  </section>
+
+  <!-- GUIDES / QUICK VIEW -->
+  <section class="wrap" id="guides">
+    <div class="section-head">
+      <div>
+        <h2>Quick view: ресурси и ръководства</h2>
+        <p>Кратки, практични модули за по-добра дисциплина.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="mini" style="text-decoration:none">
+        <h3>Bankroll & риск</h3>
+        <p>Определи бюджет, единица залог и правила за стоп. Избягвай chase поведение след загуби.</p>
+        <div class="tagrow"><span class="badge">Discipline</span><span class="badge">Variance</span></div>
+      </div>
+      <div class="mini" style="text-decoration:none">
+        <h3>Как да четеш коефициенти</h3>
+        <p>Имплицитна вероятност, value, марж и кога “добър коефициент” не означава добър залог.</p>
+        <div class="tagrow"><span class="badge">Basics</span><span class="badge">Math</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW WE CHOOSE -->
+  <section class="wrap" id="how">
+    <div class="section-head">
+      <div>
+        <h2>Как избираме платформи</h2>
+        <p>Методология, която можеш да копираш за собствена проверка.</p>
+      </div>
+    </div>
+
+    <div class="how">
+      <ol>
+        <li><b>Юрисдикция и достъпност:</b> дали е налично и легално/разрешено за твоето местоположение.</li>
+        <li><b>Условия и прозрачност:</b> ясни правила, такси, лимити, изисквания при промоции.</li>
+        <li><b>Пазари и линии:</b> достатъчна дълбочина и покритие на спортовете, които следиш.</li>
+        <li><b>Плащания:</b> методи, скорости, верификация, потенциални такси.</li>
+        <li><b>UX и поддръжка:</b> мобилна употреба, навигация, customer support.</li>
+        <li><b>Отговорна игра:</b> инструменти за лимити и самоконтрол, ресурси за помощ.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- RESPONSIBLE GAMBLING -->
+  <section class="wrap" id="rg">
+    <div class="section-head">
+      <div>
+        <h2>Отговорна игра</h2>
+        <p>Ако имаш съмнения, спри и потърси помощ.</p>
+      </div>
+    </div>
+
+    <div class="rg">
+      <div class="pill">🔞 21+ • Gambling involves risk • Play responsibly</div>
+      <p>
+        Залагането е развлечение, не стратегия за доход. Определи бюджет, избягвай да “гонеш” загуби и прави паузи.
+        Ако усещаш, че контролът се губи, потърси професионална помощ или локални организации за подкрепа.
+      </p>
+      <p style="margin-top:10px">
+        Полезни връзки (пример): <a href="YOUR_LINK_HERE/help" class="btn small">Ресурси за помощ</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="grid-3" style="gap:14px">
+      <div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div class="logo" style="width:30px;height:30px;border-radius:12px"></div>
+          <div>
+            <div style="font-weight:800; color:rgba(255,255,255,.88)">Sports Insights</div>
+            <div style="font-size:12px">Информация и ресурси • 21+</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:800; color:rgba(255,255,255,.88); margin-bottom:6px">Дисклеймъри</div>
+        <div>Съдържанието е с информационна/развлекателна цел и не представлява финансов съвет.</div>
+        <div>Възможно е да използваме афилиейт линкове (sponsored / nofollow).</div>
+      </div>
+      <div>
+        <div style="font-weight:800; color:rgba(255,255,255,.88); margin-bottom:6px">Юрисдикция</div>
+        <div>Наличността на услуги и промоции зависи от държава/щат и възрастови ограничения.</div>
+        <div>Провери локалните правила преди регистрация/депозит.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div>© <span id="y"></span> Sports Insights. All rights reserved.</div>
+  </div>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</footer>
+</body>
+</html>
