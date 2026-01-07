@@ -1,19 +1,19 @@
 
-🏏 *Match Preview – Auckland vs Otago, 11th Match*
+🏏 *Match Preview – Wellington vs Central Districts, 12th Match*
 
-📅 2026-01-06
-🏟 Eden Park Outer Oval, Auckland
+📅 2026-01-07
+🏟 Basin Reserve, Wellington
 
 💡 *AI Prediction:*  
-_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Auckland appearing slightly stronger), and the pitch profile ('Flat batting wicket early, spin later.'), this matchup appears to present Auckland entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
+_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Wellington appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Wellington entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
 
 📊 *Win Probability*
-• Auckland: 64.3%  
-• Otago, 11th Match: 35.7%
+• Wellington: 64.3%  
+• Central Districts, 12th Match: 35.7%
 
 🔥 *Projected Score:* 150–190 runs
 
-📌 Pitch: Flat batting wicket early, spin later.
+📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-01-06.html
+https://revbull.github.io/ipl_insights/matches/2026-01-07.html
