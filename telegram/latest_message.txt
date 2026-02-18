@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – Qatar vs Bahrain, 5th T20I, Bahrain tour of Qatar 2026*
 
-📅 2026-02-17
+📅 2026-02-18
 🏟 West End Park International Cricket Stadium, Doha
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-02-17.html
+https://revbull.github.io/ipl_insights/matches/2026-02-18.html
