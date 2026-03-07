@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – South Western Districts vs Knights, 16th Match, CSA Provincial One-Day Challenge Division Two 2026*
 
-📅 2026-03-06
+📅 2026-03-07
 🏟 Recreation Ground, Oudtshoorn
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-03-06.html
+https://revbull.github.io/ipl_insights/matches/2026-03-07.html
