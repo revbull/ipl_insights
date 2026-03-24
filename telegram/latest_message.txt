@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – West Indies Women vs Australia Women, 2nd T20I, Australia Women tour of West Indies, 2026*
 
-📅 2026-03-23
+📅 2026-03-24
 🏟 Arnos Vale Ground, Kingstown, St Vincent
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-03-23.html
+https://revbull.github.io/ipl_insights/matches/2026-03-24.html
