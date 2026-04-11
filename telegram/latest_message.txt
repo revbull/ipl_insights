@@ -1,19 +1,19 @@
 
-🏏 *Match Preview – Kolkata Knight Riders vs Lucknow Super Giants, 15th Match, Indian Premier League 2026*
+🏏 *Match Preview – Rajasthan Royals vs Royal Challengers Bengaluru, 16th Match, Indian Premier League 2026*
 
-📅 2026-04-10
-🏟 Eden Gardens, Kolkata
+📅 2026-04-11
+🏟 Barsapara Cricket Stadium, Guwahati
 
 💡 *AI Prediction:*  
-_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Kolkata Knight Riders appearing slightly stronger), and the pitch profile ('Flat batting wicket early, spin later.'), this matchup appears to present Kolkata Knight Riders entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
+_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Rajasthan Royals appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Rajasthan Royals entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
 
 📊 *Win Probability*
-• Kolkata Knight Riders: 64.3%  
-• Lucknow Super Giants, 15th Match, Indian Premier League 2026: 35.7%
+• Rajasthan Royals: 64.3%  
+• Royal Challengers Bengaluru, 16th Match, Indian Premier League 2026: 35.7%
 
 🔥 *Projected Score:* 150–190 runs
 
-📌 Pitch: Flat batting wicket early, spin later.
+📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-04-10.html
+https://revbull.github.io/ipl_insights/matches/2026-04-11.html
