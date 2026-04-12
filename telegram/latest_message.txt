@@ -1,19 +1,19 @@
 
-🏏 *Match Preview – Rajasthan Royals vs Royal Challengers Bengaluru, 16th Match, Indian Premier League 2026*
+🏏 *Match Preview – Chennai Super Kings vs Delhi Capitals, 18th Match, Indian Premier League 2026*
 
-📅 2026-04-11
-🏟 Barsapara Cricket Stadium, Guwahati
+📅 2026-04-12
+🏟 MA Chidambaram Stadium, Chennai
 
 💡 *AI Prediction:*  
-_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Rajasthan Royals appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Rajasthan Royals entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
+_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Chennai Super Kings appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Chennai Super Kings entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
 
 📊 *Win Probability*
-• Rajasthan Royals: 64.3%  
-• Royal Challengers Bengaluru, 16th Match, Indian Premier League 2026: 35.7%
+• Chennai Super Kings: 64.3%  
+• Delhi Capitals, 18th Match, Indian Premier League 2026: 35.7%
 
 🔥 *Projected Score:* 150–190 runs
 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-04-11.html
+https://revbull.github.io/ipl_insights/matches/2026-04-12.html
