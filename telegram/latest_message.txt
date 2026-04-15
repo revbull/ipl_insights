@@ -1,19 +1,19 @@
 
-🏏 *Match Preview – Sunrisers Hyderabad vs Rajasthan Royals, 21st Match, Indian Premier League 2026*
+🏏 *Match Preview – Chennai Super Kings vs Kolkata Knight Riders, 22nd Match, Indian Premier League 2026*
 
-📅 2026-04-14
-🏟 Rajiv Gandhi International Stadium, Hyderabad
+📅 2026-04-15
+🏟 MA Chidambaram Stadium, Chennai
 
 💡 *AI Prediction:*  
-_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Sunrisers Hyderabad appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Sunrisers Hyderabad entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
+_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Chennai Super Kings appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Chennai Super Kings entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
 
 📊 *Win Probability*
-• Sunrisers Hyderabad: 64.3%  
-• Rajasthan Royals, 21st Match, Indian Premier League 2026: 35.7%
+• Chennai Super Kings: 64.3%  
+• Kolkata Knight Riders, 22nd Match, Indian Premier League 2026: 35.7%
 
 🔥 *Projected Score:* 150–190 runs
 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-04-14.html
+https://revbull.github.io/ipl_insights/matches/2026-04-15.html
