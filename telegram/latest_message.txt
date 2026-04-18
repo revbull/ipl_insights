@@ -1,19 +1,19 @@
 
-🏏 *Match Preview – Mumbai Indians vs Punjab Kings, 24th Match, Indian Premier League 2026*
+🏏 *Match Preview – Gujarat Titans vs Kolkata Knight Riders, 25th Match, Indian Premier League 2026*
 
-📅 2026-04-17
-🏟 Wankhede Stadium, Mumbai
+📅 2026-04-18
+🏟 Narendra Modi Stadium, Ahmedabad
 
 💡 *AI Prediction:*  
-_Based on venue conditions, a projected scoring range of 165–205 runs, recent form (with Mumbai Indians appearing slightly stronger), and the pitch profile ('High-scoring ground with excellent bounce — 180+ likely.'), this matchup appears to present Mumbai Indians entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
+_Based on venue conditions, a projected scoring range of 150–190 runs, recent form (with Gujarat Titans appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Gujarat Titans entering as clear favorites. Early momentum and top-order execution will likely determine the winner._
 
 📊 *Win Probability*
-• Mumbai Indians: 65.8%  
-• Punjab Kings, 24th Match, Indian Premier League 2026: 34.2%
+• Gujarat Titans: 64.3%  
+• Kolkata Knight Riders, 25th Match, Indian Premier League 2026: 35.7%
 
-🔥 *Projected Score:* 165–205 runs
+🔥 *Projected Score:* 150–190 runs
 
-📌 Pitch: High-scoring ground with excellent bounce — 180+ likely.
+📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-04-17.html
+https://revbull.github.io/ipl_insights/matches/2026-04-18.html
