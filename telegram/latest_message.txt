@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – Guernsey vs Isle of Man, 3rd T20I, Isle of Man tour of Guernsey 2026*
 
-📅 2026-05-05
+📅 2026-05-06
 🏟 King George V Sports Ground, Castel
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-05-05.html
+https://revbull.github.io/ipl_insights/matches/2026-05-06.html
