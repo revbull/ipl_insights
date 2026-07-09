@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – India Women U19 vs Sri Lanka Women U19, 3rd unofficial ODI, Sri Lanka Women U19 tour of India 2026*
 
-📅 2026-07-08
+📅 2026-07-09
 🏟 Cricket Association Puducherry Siechem Ground, Puducherry
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-07-08.html
+https://revbull.github.io/ipl_insights/matches/2026-07-09.html
