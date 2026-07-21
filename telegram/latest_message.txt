@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – Sri Lanka U19 vs India U19, 1st unofficial Test, India U19 tour of Sri Lanka 2026*
 
-📅 2026-07-20
+📅 2026-07-21
 🏟 Galle International Stadium, Galle
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-07-20.html
+https://revbull.github.io/ipl_insights/matches/2026-07-21.html
