@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – England vs Pakistan, 3rd Test, Pakistan tour of England 2026*
 
-📅 2026-09-11
+📅 2026-09-12
 🏟 Edgbaston, Birmingham
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-09-11.html
+https://revbull.github.io/ipl_insights/matches/2026-09-12.html
