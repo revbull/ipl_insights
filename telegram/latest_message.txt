@@ -1,7 +1,7 @@
 
 🏏 *Match Preview – India vs West Indies, 2nd ODI, West Indies tour of India, 2026*
 
-📅 2026-10-01
+📅 2026-10-02
 🏟 Barsapara Cricket Stadium, Guwahati
 
 💡 *AI Prediction:*  
@@ -16,4 +16,4 @@ _Based on venue conditions, a projected scoring range of 150–190 runs, recent 
 📌 Pitch: Balanced wicket with moderate scoring conditions.
 
 🔗 Full Preview:
-https://revbull.github.io/ipl_insights/matches/2026-10-01.html
+https://revbull.github.io/ipl_insights/matches/2026-10-02.html
