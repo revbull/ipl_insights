@@ -1,0 +1,38 @@
+{
+    "date": "2026-10-15",
+    "teamA": "Oman",
+    "teamB": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27",
+    "teamA_logo": "https://g.cricapi.com/iapi/14-637877085850526611.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/64-637877083212505394.webp?w=48",
+    "venue": "Al Amerat Cricket Ground (Ministry Turf 1), Al Amerat",
+    "formA": "W L W W L",
+    "formB": "L W L L W",
+    "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
+    "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
+    "pitch": "Balanced wicket with moderate scoring conditions.",
+    "projected": "150\u2013190 runs",
+    "players": [
+        {
+            "name": "Oman Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Oman Strike Bowler",
+            "role": "Bowler"
+        },
+        {
+            "name": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27 Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27 Strike Bowler",
+            "role": "Bowler"
+        }
+    ],
+    "live": null,
+    "ml_probability": {
+        "teamA_prob": 64.3,
+        "teamB_prob": 35.7
+    },
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Oman appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Oman entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+}

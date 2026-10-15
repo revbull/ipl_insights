@@ -1,10 +1,10 @@
 {
-    "date": "2026-10-14",
-    "teamA": "Australia Women",
-    "teamB": "Bangladesh Women, 3rd ODI, Bangladesh Women tour of Australia, 2026",
-    "teamA_logo": "",
-    "teamB_logo": "",
-    "venue": "Allan Border Field, Brisbane",
+    "date": "2026-10-15",
+    "teamA": "Oman",
+    "teamB": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27",
+    "teamA_logo": "https://g.cricapi.com/iapi/14-637877085850526611.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/64-637877083212505394.webp?w=48",
+    "venue": "Al Amerat Cricket Ground (Ministry Turf 1), Al Amerat",
     "formA": "W L W W L",
     "formB": "L W L L W",
     "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
@@ -13,19 +13,19 @@
     "projected": "150\u2013190 runs",
     "players": [
         {
-            "name": "Australia Women Key Batter",
+            "name": "Oman Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Australia Women Strike Bowler",
+            "name": "Oman Strike Bowler",
             "role": "Bowler"
         },
         {
-            "name": "Bangladesh Women, 3rd ODI, Bangladesh Women tour of Australia, 2026 Key Batter",
+            "name": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Bangladesh Women, 3rd ODI, Bangladesh Women tour of Australia, 2026 Strike Bowler",
+            "name": "Canada, 137th Match, ICC Cricket World Cup League Two 2023-27 Strike Bowler",
             "role": "Bowler"
         }
     ],
@@ -34,5 +34,5 @@
         "teamA_prob": 64.3,
         "teamB_prob": 35.7
     },
-    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Australia Women appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Australia Women entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Oman appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Oman entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
 }
