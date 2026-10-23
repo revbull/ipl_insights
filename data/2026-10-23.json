@@ -1,0 +1,38 @@
+{
+    "date": "2026-10-23",
+    "teamA": "Qatar",
+    "teamB": "Kuwait, 33rd Match, ICC CWC Challenge League A, 2024-26",
+    "teamA_logo": "https://g.cricapi.com/iapi/621-637864920257551899.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/577-637877086204623715.webp?w=48",
+    "venue": "Ruaraka Sports Club Ground, Nairobi",
+    "formA": "W L W W L",
+    "formB": "L W L L W",
+    "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
+    "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
+    "pitch": "Balanced wicket with moderate scoring conditions.",
+    "projected": "150\u2013190 runs",
+    "players": [
+        {
+            "name": "Qatar Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Qatar Strike Bowler",
+            "role": "Bowler"
+        },
+        {
+            "name": "Kuwait, 33rd Match, ICC CWC Challenge League A, 2024-26 Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Kuwait, 33rd Match, ICC CWC Challenge League A, 2024-26 Strike Bowler",
+            "role": "Bowler"
+        }
+    ],
+    "live": null,
+    "ml_probability": {
+        "teamA_prob": 64.3,
+        "teamB_prob": 35.7
+    },
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Qatar appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Qatar entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+}
