@@ -1,7 +1,7 @@
 {
-    "date": "2026-10-25",
+    "date": "2026-10-26",
     "teamA": "Mexico Women",
-    "teamB": "Argentina Women, 2nd T20I, Argentina Women tour of Mexico, 2026",
+    "teamB": "Argentina Women, 3rd T20I, Argentina Women tour of Mexico, 2026",
     "teamA_logo": "https://g.cricapi.com/iapi/579-637869397212602812.webp?w=48",
     "teamB_logo": "https://h.cricapi.com/img/icon512.png",
     "venue": "Complejo Municipal de Beisbol de Texcoco, Texcoco de Mora",
@@ -21,11 +21,11 @@
             "role": "Bowler"
         },
         {
-            "name": "Argentina Women, 2nd T20I, Argentina Women tour of Mexico, 2026 Key Batter",
+            "name": "Argentina Women, 3rd T20I, Argentina Women tour of Mexico, 2026 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Argentina Women, 2nd T20I, Argentina Women tour of Mexico, 2026 Strike Bowler",
+            "name": "Argentina Women, 3rd T20I, Argentina Women tour of Mexico, 2026 Strike Bowler",
             "role": "Bowler"
         }
     ],
