@@ -1,0 +1,38 @@
+{
+    "date": "2026-10-31",
+    "teamA": "Scotland",
+    "teamB": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026",
+    "teamA_logo": "https://g.cricapi.com/iapi/1-637877075587179422.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/79-637877081763746652.webp?w=48",
+    "venue": "Mission Road Ground, Mong Kok",
+    "formA": "W L W W L",
+    "formB": "L W L L W",
+    "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
+    "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
+    "pitch": "Balanced wicket with moderate scoring conditions.",
+    "projected": "150\u2013190 runs",
+    "players": [
+        {
+            "name": "Scotland Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Scotland Strike Bowler",
+            "role": "Bowler"
+        },
+        {
+            "name": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026 Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026 Strike Bowler",
+            "role": "Bowler"
+        }
+    ],
+    "live": null,
+    "ml_probability": {
+        "teamA_prob": 64.3,
+        "teamB_prob": 35.7
+    },
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Scotland appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Scotland entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+}
