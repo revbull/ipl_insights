@@ -1,9 +1,9 @@
 {
-    "date": "2026-10-31",
-    "teamA": "Scotland",
-    "teamB": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026",
+    "date": "2026-11-01",
+    "teamA": "Australia",
+    "teamB": "Afghanistan, Cup, Final, Hong Kong Sixes 2026",
     "teamA_logo": "https://g.cricapi.com/iapi/1-637877075587179422.webp?w=48",
-    "teamB_logo": "https://g.cricapi.com/iapi/79-637877081763746652.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/6-637877070670541994.webp?w=48",
     "venue": "Mission Road Ground, Mong Kok",
     "formA": "W L W W L",
     "formB": "L W L L W",
@@ -13,19 +13,19 @@
     "projected": "150\u2013190 runs",
     "players": [
         {
-            "name": "Scotland Key Batter",
+            "name": "Australia Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Scotland Strike Bowler",
+            "name": "Australia Strike Bowler",
             "role": "Bowler"
         },
         {
-            "name": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026 Key Batter",
+            "name": "Afghanistan, Cup, Final, Hong Kong Sixes 2026 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Afghanistan, Cup, Semi Final 2, Hong Kong Sixes 2026 Strike Bowler",
+            "name": "Afghanistan, Cup, Final, Hong Kong Sixes 2026 Strike Bowler",
             "role": "Bowler"
         }
     ],
@@ -34,5 +34,5 @@
         "teamA_prob": 64.3,
         "teamB_prob": 35.7
     },
-    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Scotland appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Scotland entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Australia appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Australia entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
 }
