@@ -1,7 +1,7 @@
 {
-    "date": "2026-11-04",
-    "teamA": "Lumbini Lions",
-    "teamB": "Pokhara Avengers, 13th Match, Nepal Premier League 2026",
+    "date": "2026-11-05",
+    "teamA": "Biratnagar Kings",
+    "teamB": "Kathmandu Gorkhas, 15th Match, Nepal Premier League 2026",
     "teamA_logo": "https://h.cricapi.com/img/icon512.png",
     "teamB_logo": "https://h.cricapi.com/img/icon512.png",
     "venue": "Tribhuvan University International Cricket Ground, Kirtipur",
@@ -13,19 +13,19 @@
     "projected": "150\u2013190 runs",
     "players": [
         {
-            "name": "Lumbini Lions Key Batter",
+            "name": "Biratnagar Kings Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Lumbini Lions Strike Bowler",
+            "name": "Biratnagar Kings Strike Bowler",
             "role": "Bowler"
         },
         {
-            "name": "Pokhara Avengers, 13th Match, Nepal Premier League 2026 Key Batter",
+            "name": "Kathmandu Gorkhas, 15th Match, Nepal Premier League 2026 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Pokhara Avengers, 13th Match, Nepal Premier League 2026 Strike Bowler",
+            "name": "Kathmandu Gorkhas, 15th Match, Nepal Premier League 2026 Strike Bowler",
             "role": "Bowler"
         }
     ],
@@ -34,5 +34,5 @@
         "teamA_prob": 64.3,
         "teamB_prob": 35.7
     },
-    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Lumbini Lions appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Lumbini Lions entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Biratnagar Kings appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Biratnagar Kings entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
 }
