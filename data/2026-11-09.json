@@ -1,0 +1,38 @@
+{
+    "date": "2026-11-09",
+    "teamA": "Uganda Women",
+    "teamB": "United States of America Women, 6th Match, Womens Victoria T20I Series, 2026",
+    "teamA_logo": "https://g.cricapi.com/iapi/1135-637877086844153505.webp?w=48",
+    "teamB_logo": "https://g.cricapi.com/iapi/93-637877085206398451.webp?w=48",
+    "venue": "Entebbe Cricket Oval, Entebbe",
+    "formA": "W L W W L",
+    "formB": "L W L L W",
+    "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
+    "formB_icons": "\ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe5 \ud83d\udfe9",
+    "pitch": "Balanced wicket with moderate scoring conditions.",
+    "projected": "150\u2013190 runs",
+    "players": [
+        {
+            "name": "Uganda Women Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "Uganda Women Strike Bowler",
+            "role": "Bowler"
+        },
+        {
+            "name": "United States of America Women, 6th Match, Womens Victoria T20I Series, 2026 Key Batter",
+            "role": "Batsman"
+        },
+        {
+            "name": "United States of America Women, 6th Match, Womens Victoria T20I Series, 2026 Strike Bowler",
+            "role": "Bowler"
+        }
+    ],
+    "live": null,
+    "ml_probability": {
+        "teamA_prob": 64.3,
+        "teamB_prob": 35.7
+    },
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Uganda Women appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Uganda Women entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+}
