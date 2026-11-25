@@ -1,10 +1,10 @@
 {
-    "date": "2026-11-24",
-    "teamA": "Malaysia Women",
-    "teamB": "Indonesia Women, 1st Match, Malaysia Womens T20I Tri-Series, 2026",
-    "teamA_logo": "https://g.cricapi.com/iapi/2874-638040163945402807.webp?w=48",
-    "teamB_logo": "https://g.cricapi.com/iapi/1551-637926306213013515.webp?w=48",
-    "venue": "Bayuemas Oval, Kuala Lumpur",
+    "date": "2026-11-25",
+    "teamA": "Bihar Rising",
+    "teamB": "Andhra Warriors, 1st Match, Group B, Indian Softball Cricket League 2026",
+    "teamA_logo": "https://h.cricapi.com/img/icon512.png",
+    "teamB_logo": "https://h.cricapi.com/img/icon512.png",
+    "venue": "Acharya Stadium, Bengaluru",
     "formA": "W L W W L",
     "formB": "L W L L W",
     "formA_icons": "\ud83d\udfe9 \ud83d\udfe5 \ud83d\udfe9 \ud83d\udfe9 \ud83d\udfe5",
@@ -13,19 +13,19 @@
     "projected": "150\u2013190 runs",
     "players": [
         {
-            "name": "Malaysia Women Key Batter",
+            "name": "Bihar Rising Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Malaysia Women Strike Bowler",
+            "name": "Bihar Rising Strike Bowler",
             "role": "Bowler"
         },
         {
-            "name": "Indonesia Women, 1st Match, Malaysia Womens T20I Tri-Series, 2026 Key Batter",
+            "name": "Andhra Warriors, 1st Match, Group B, Indian Softball Cricket League 2026 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Indonesia Women, 1st Match, Malaysia Womens T20I Tri-Series, 2026 Strike Bowler",
+            "name": "Andhra Warriors, 1st Match, Group B, Indian Softball Cricket League 2026 Strike Bowler",
             "role": "Bowler"
         }
     ],
@@ -34,5 +34,5 @@
         "teamA_prob": 64.3,
         "teamB_prob": 35.7
     },
-    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Malaysia Women appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Malaysia Women entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
+    "ai_summary": "Based on venue conditions, a projected scoring range of 150\u2013190 runs, recent form (with Bihar Rising appearing slightly stronger), and the pitch profile ('Balanced wicket with moderate scoring conditions.'), this matchup appears to present Bihar Rising entering as clear favorites. Early momentum and top-order execution will likely determine the winner."
 }
