@@ -1,9 +1,9 @@
 {
-    "date": "2026-11-27",
+    "date": "2026-11-28",
     "teamA": "Bihar Rising",
-    "teamB": "Haryana Phoenix, 8th Match, Group B, Indian Softball Cricket League 2026",
-    "teamA_logo": "https://h.cricapi.com/img/icon512.png",
-    "teamB_logo": "https://h.cricapi.com/img/icon512.png",
+    "teamB": "Telangana Singhams, 11th Match, Group B, Indian Softball Cricket League 2026",
+    "teamA_logo": "",
+    "teamB_logo": "",
     "venue": "Acharya Stadium, Bengaluru",
     "formA": "W L W W L",
     "formB": "L W L L W",
@@ -21,11 +21,11 @@
             "role": "Bowler"
         },
         {
-            "name": "Haryana Phoenix, 8th Match, Group B, Indian Softball Cricket League 2026 Key Batter",
+            "name": "Telangana Singhams, 11th Match, Group B, Indian Softball Cricket League 2026 Key Batter",
             "role": "Batsman"
         },
         {
-            "name": "Haryana Phoenix, 8th Match, Group B, Indian Softball Cricket League 2026 Strike Bowler",
+            "name": "Telangana Singhams, 11th Match, Group B, Indian Softball Cricket League 2026 Strike Bowler",
             "role": "Bowler"
         }
     ],
